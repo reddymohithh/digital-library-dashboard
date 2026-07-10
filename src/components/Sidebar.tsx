@@ -37,17 +37,17 @@ export default function Sidebar({
   const ratingCounts = new Map(facets.rating.map((r) => [r.value, r.count]));
 
   return (
-    <aside className="w-[224px] shrink-0 border-r border-border bg-panel-muted flex flex-col">
-      <div className="p-4">
+    <aside className="flex w-[224px] shrink-0 flex-col border-r border-border bg-panel-muted">
+      <div className="flex h-16 shrink-0 items-center border-b border-border px-4">
         <button
           onClick={onOpenGoals}
-          className="w-full rounded-lg border border-wood/30 bg-panel px-3 py-2.5 text-sm font-bold text-wood-dark shadow-sm transition hover:bg-wood hover:text-white"
+          className="flex h-10 w-full items-center justify-center rounded-lg border border-wood/30 bg-panel text-sm font-bold uppercase tracking-wide text-wood-dark shadow-sm transition hover:bg-wood hover:text-white"
         >
           🎯 Reading Goals
         </button>
       </div>
 
-      <div className="flex-1 overflow-y-auto px-4 pb-6">
+      <div className="flex-1 overflow-y-auto px-4 pt-4 pb-6">
         <div className="mb-6">
           <div className="mb-2 text-[11px] font-bold uppercase tracking-wider text-muted">
             Status

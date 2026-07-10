@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useRef, useState } from "react";
 import { useAdmin } from "@/lib/AdminContext";
 
 const SORT_OPTIONS = [
@@ -28,9 +29,22 @@ export default function TopBar({
   onOpenAccount: () => void;
 }) {
   const { isAdmin, logout } = useAdmin();
+  const [menuOpen, setMenuOpen] = useState(false);
+  const menuRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!menuOpen) return;
+    function handleClickOutside(e: MouseEvent) {
+      if (menuRef.current && !menuRef.current.contains(e.target as Node)) {
+        setMenuOpen(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, [menuOpen]);
 
   return (
-    <div className="flex items-center gap-3 border-b border-wood-dark/80 bg-panel-muted px-6 py-3">
+    <div className="flex h-16 shrink-0 items-center gap-3 border-b border-wood-dark/80 bg-panel-muted px-6">
       <span className="font-serif-heading text-xl font-bold text-foreground">
         📚 My Library
       </span>
@@ -77,20 +91,35 @@ export default function TopBar({
         )}
 
         {isAdmin ? (
-          <div className="flex items-center gap-2 pl-2">
-            <span className="text-sm font-bold text-wood-dark">● Admin</span>
+          <div className="relative pl-2" ref={menuRef}>
             <button
-              onClick={onOpenAccount}
-              className="text-sm text-muted hover:text-foreground"
+              onClick={() => setMenuOpen((v) => !v)}
+              className="flex items-center gap-1.5 rounded-md border border-border bg-panel px-3 py-1.5 text-sm font-bold text-wood-dark hover:bg-panel-muted"
             >
-              Change Login
+              ● Admin <span className="text-xs text-muted">▾</span>
             </button>
-            <button
-              onClick={logout}
-              className="text-sm text-muted hover:text-foreground"
-            >
-              Sign out
-            </button>
+            {menuOpen && (
+              <div className="absolute right-0 top-full z-20 mt-1 w-40 overflow-hidden rounded-md border border-border bg-panel shadow-lg">
+                <button
+                  onClick={() => {
+                    setMenuOpen(false);
+                    onOpenAccount();
+                  }}
+                  className="block w-full px-3 py-2 text-left text-sm text-foreground/80 hover:bg-panel-muted"
+                >
+                  Change Login
+                </button>
+                <button
+                  onClick={() => {
+                    setMenuOpen(false);
+                    logout();
+                  }}
+                  className="block w-full px-3 py-2 text-left text-sm text-foreground/80 hover:bg-panel-muted"
+                >
+                  Sign Out
+                </button>
+              </div>
+            )}
           </div>
         ) : (
           <button

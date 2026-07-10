@@ -8,6 +8,7 @@ import TopBar from "@/components/TopBar";
 import ContentHeader from "@/components/ContentHeader";
 import BookCard from "@/components/BookCard";
 import BookListRow from "@/components/BookListRow";
+import BookListHeader from "@/components/BookListHeader";
 import Pagination from "@/components/Pagination";
 import BookDetailModal from "@/components/BookDetailModal";
 import BookFormModal from "@/components/BookFormModal";
@@ -82,7 +83,7 @@ export default function Home() {
   const genreOptions = facets.genre.map((g) => g.value);
 
   return (
-    <div className="flex min-h-screen flex-col">
+    <div className="flex h-screen flex-col overflow-hidden">
       <TopBar
         view={view}
         onViewChange={setView}
@@ -95,7 +96,7 @@ export default function Home() {
         onOpenAccount={() => setShowAccount(true)}
       />
 
-      <div className="flex flex-1">
+      <div className="flex flex-1 overflow-hidden">
         <Sidebar
           facets={facets}
           filters={filters}
@@ -103,7 +104,7 @@ export default function Home() {
           onOpenGoals={() => setShowGoals(true)}
         />
 
-        <main className="flex flex-1 flex-col">
+        <main className="flex flex-1 flex-col overflow-hidden">
           <ContentHeader
             search={search}
             onSearchChange={setSearch}
@@ -113,28 +114,29 @@ export default function Home() {
             total={data?.total ?? 0}
           />
 
-          {loading && books.length === 0 ? (
-            <p className="p-6 text-sm text-muted">Loading…</p>
-          ) : books.length === 0 ? (
-            <p className="p-6 text-sm text-muted">
-              No books match these filters yet.
-              {isAdmin && " Add one, or import a CSV, using the buttons above."}
-            </p>
-          ) : view === "grid" ? (
-            <div className="grid grid-cols-2 gap-5 p-6 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-7">
-              {books.map((book) => (
-                <BookCard key={book.id} book={book} onClick={() => setSelectedBook(book)} />
-              ))}
-            </div>
-          ) : (
-            <div className="px-6 py-2">
-              {books.map((book) => (
-                <BookListRow key={book.id} book={book} onClick={() => setSelectedBook(book)} />
-              ))}
-            </div>
-          )}
+          <div className="flex-1 overflow-y-auto">
+            {loading && books.length === 0 ? (
+              <p className="p-6 text-sm text-muted">Loading…</p>
+            ) : books.length === 0 ? (
+              <p className="p-6 text-sm text-muted">
+                No books match these filters yet.
+                {isAdmin && " Add one, or import a CSV, using the buttons above."}
+              </p>
+            ) : view === "grid" ? (
+              <div className="grid grid-cols-2 gap-5 p-6 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-7">
+                {books.map((book) => (
+                  <BookCard key={book.id} book={book} onClick={() => setSelectedBook(book)} />
+                ))}
+              </div>
+            ) : (
+              <div className="px-6">
+                <BookListHeader />
+                {books.map((book) => (
+                  <BookListRow key={book.id} book={book} onClick={() => setSelectedBook(book)} />
+                ))}
+              </div>
+            )}
 
-          <div className="mt-auto">
             <Pagination
               page={data?.page ?? 1}
               pageSize={data?.pageSize ?? 27}

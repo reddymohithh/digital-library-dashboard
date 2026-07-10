@@ -1,6 +1,10 @@
 import { z } from "zod";
 import type { Format, Status } from "@prisma/client";
 
+/** Shared column template so the list-view header and rows always line up. */
+export const BOOK_LIST_GRID_COLS =
+  "grid-cols-[48px_minmax(0,2.5fr)_minmax(0,2fr)_minmax(0,1.4fr)_110px_100px_80px]";
+
 export const STATUS_CSV_TO_ENUM: Record<string, Status> = {
   reading: "READING",
   "want-to-read": "WANT_TO_READ",
