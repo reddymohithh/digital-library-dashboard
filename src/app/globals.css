@@ -1,0 +1,53 @@
+@import "tailwindcss";
+
+:root {
+  --background: #faf7f2;
+  --foreground: #2a2118;
+  --wood: #7c5535;
+  --wood-dark: #5f4128;
+  --panel: #ffffff;
+  --panel-muted: #f5efe5;
+  --border: #e5dccb;
+  --muted: #9a8878;
+  --accent-green: #3f7d4d;
+  --accent-orange: #c98a2c;
+  --accent-red: #b0453f;
+  --font-sans: var(--font-lato);
+  --font-serif: var(--font-playfair);
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-wood: var(--wood);
+  --color-wood-dark: var(--wood-dark);
+  --color-panel: var(--panel);
+  --color-panel-muted: var(--panel-muted);
+  --color-border: var(--border);
+  --color-muted: var(--muted);
+  --color-accent-green: var(--accent-green);
+  --color-accent-orange: var(--accent-orange);
+  --color-accent-red: var(--accent-red);
+  --font-sans: var(--font-lato);
+  --font-serif: var(--font-playfair);
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-sans), Arial, Helvetica, sans-serif;
+}
+
+.font-serif-heading {
+  font-family: var(--font-serif), Georgia, serif;
+}
+
+.cover-placeholder {
+  background-image: repeating-linear-gradient(
+    135deg,
+    #ddd 0,
+    #ddd 2px,
+    #eee 2px,
+    #eee 10px
+  );
+}

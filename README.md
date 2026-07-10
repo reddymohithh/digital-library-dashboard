@@ -1,55 +1,98 @@
 # Digital Library Dashboard
 
-A personal reading tracker — browse your library, track reading goals, and log daily
-reading progress. Built as a self-contained single-page app (React + Babel Standalone,
-loaded from CDN at runtime — no build step).
+A personal reading tracker: browse a library, manage it (add/edit/import) as an
+admin, and track yearly reading goals with a daily check-in, calendar, and
+year-in-review stats. Built with Next.js, Prisma, and Postgres, deployed on
+Vercel. See [`PRD.md`](PRD.md) for the full product spec.
 
-## Files
+The original design exploration (a static, localStorage-only prototype) lives
+in [`design-reference/`](design-reference) — it validated the layout and
+feature set but had no real backend or access control, which this app replaces.
 
-- `index.html` — the deployed app. This is what Vercel serves.
-- `Digital Library Standalone.html` — identical copy, kept as the original source export.
-- `Digital Library Dashboard 4.zip` — the editable design-tool source project.
-- `Digital Library - Chat Log.md` — design history / feature log from the original build.
+## Stack
 
-## Deploying to Vercel
+- Next.js 16 (App Router) + TypeScript, Tailwind CSS
+- Postgres via [Neon](https://neon.tech), accessed through Prisma ORM
+- Custom session auth (jose + bcryptjs) — no third-party auth provider, since
+  there's a single hardcoded admin identity
+- papaparse for CSV import
 
-1. Push this folder to a GitHub repo.
-2. In the [Vercel dashboard](https://vercel.com/new), import that repo.
-3. Framework preset: choose **Other** (it's a static file, no build command / output
-   directory needed — Vercel serves `index.html` automatically).
-4. Deploy. No environment variables are required.
+## One-time setup
 
-## Admin login
+Everything below is a one-time step to get the app running. After this,
+every book, goal, and daily check-in is entered through the app itself — no
+further terminal or database work is needed.
 
-Default credentials: `admin` / `booklover`.
+### 1. Create a free Neon Postgres database
 
-To change them, open the deployed site, sign in, then in the browser console run:
+1. Go to [neon.tech](https://neon.tech) and sign up (free tier is enough).
+2. Create a new project.
+3. From the project's connection details, copy **two** connection strings:
+   - The **pooled** connection string (has `-pooler` in the hostname) → this
+     becomes `DATABASE_URL`.
+   - The **direct** connection string (no `-pooler`) → this becomes
+     `DIRECT_URL`. Prisma needs the direct connection to run migrations.
 
-```js
-localStorage.setItem('dl_cu', 'your-username');
-localStorage.setItem('dl_cp', 'your-new-password');
+### 2. Generate admin credentials
+
+Pick a username and a password, then hash the password locally (never commit
+the plain password anywhere):
+
+```bash
+node -e "console.log(require('bcryptjs').hashSync(process.argv[1], 10))" "your-password-here"
 ```
 
-## Important: how data & login actually work
+Copy the printed hash — you'll paste it as `ADMIN_PASSWORD_HASH`.
 
-This app has **no backend** — everything (books, goals, daily log, and the admin
-session) lives in `localStorage`, entirely inside one browser:
+Generate a random session secret too:
 
-- **Data doesn't sync across devices or visitors.** Books you add on your laptop
-  only exist in your laptop's browser. Anyone else visiting the deployed URL sees
-  the original seed data in their own browser, not your edits.
-- **The admin login is a client-side gate, not real access control.** The
-  username/password check and the "only admin can edit" restriction run entirely
-  in the page's own JavaScript. A visitor who opens dev tools can read the
-  credentials from the page source, or simply run
-  `localStorage.setItem('dl_admin', '1')` to unlock admin controls without ever
-  knowing the password.
+```bash
+openssl rand -hex 32
+```
 
-This is fine for a personal/offline use case or a portfolio demo where you're the
-only one actually entering data. It does **not** provide real viewer/editor
-separation for a multi-user or public-write scenario — that would require a real
-backend (database + server-verified auth), which this build intentionally doesn't
-have.
+### 3. Configure environment variables
+
+Locally, copy `.env.example` to `.env` and fill in the four values from steps
+1–2. On Vercel, add the same four variables under **Project Settings →
+Environment Variables**:
+
+- `DATABASE_URL`
+- `DIRECT_URL`
+- `ADMIN_USERNAME`
+- `ADMIN_PASSWORD_HASH`
+- `SESSION_SECRET`
+
+### 4. Run the initial database migration
+
+```bash
+npm install
+npx prisma migrate deploy
+```
+
+(Locally during development, use `npx prisma migrate dev` instead, which also
+keeps your local Prisma Client in sync as the schema evolves.)
+
+### 5. Deploy
+
+Push this repo to GitHub, then import it in the
+[Vercel dashboard](https://vercel.com/new). Vercel auto-detects Next.js — no
+custom build settings needed as long as the environment variables from step 3
+are set.
+
+## Everyday usage (no terminal required)
+
+- **Add a book**: sign in → "+ Add Book" → fill in the form → Save.
+- **Import books**: sign in → "Import CSV" → download the template if you need
+  it → upload your file → review the validation preview → confirm.
+- **Edit or delete a book** (including ones brought in via CSV): open its
+  detail view → Edit or Delete.
+- **Set a reading goal**: open "Reading Goals" → Set Goal → enter your yearly
+  books target, daily pages target, and (optional) target genre.
+- **Daily check-in**: in the Reading Goals panel, mark Met / Partial / Missed
+  each day. Partial counts as half credit toward the derived pages-read stat.
+
+Everything above is a normal admin login + clicking around the deployed site —
+never a database console or a script.
 
 ## CSV import format
 
@@ -63,3 +106,24 @@ title,author,genre,year_published,pages,status,type,rating,dateStarted,dateFinis
 - Dates: `YYYY-MM-DD`
 - Wrap any field containing commas in double quotes
 - Only `title` is required
+- A downloadable template with these headers is available from the Import CSV
+  screen in the app.
+
+## Access control model
+
+- The login screen shows no default/hint credentials — the only way in is
+  knowing the real username and password.
+- On successful login, the server sets a signed, httpOnly session cookie.
+- Every write endpoint (`POST`/`PUT`/`DELETE` on books, goals, and daily logs)
+  independently re-verifies that cookie server-side. Hiding the admin buttons
+  in the UI for logged-out visitors is a convenience — the actual boundary is
+  enforced on the server, so a viewer can't bypass it by inspecting the page
+  or calling the API directly.
+
+## Local development
+
+```bash
+npm install
+npx prisma migrate dev
+npm run dev
+```

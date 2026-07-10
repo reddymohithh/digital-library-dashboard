@@ -1,0 +1,70 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+enum Format {
+  PHYSICAL
+  AUDIOBOOK
+  EBOOK
+}
+
+enum Status {
+  READING
+  WANT_TO_READ
+  FINISHED
+  DNF
+  ON_HOLD
+  RE_READING
+}
+
+enum DailyStatus {
+  MET
+  PARTIAL
+  MISSED
+}
+
+model Book {
+  id            String    @id @default(cuid())
+  title         String
+  author        String
+  genre         String?
+  yearPublished Int?
+  pages         Int?
+  status        Status
+  format        Format
+  rating        Int       @default(0)
+  dateStarted   DateTime? @db.Date
+  dateFinished  DateTime? @db.Date
+  description   String?
+  notes         String?
+  source        String?
+  coverUrl      String?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  @@index([status])
+  @@index([genre])
+}
+
+model Goal {
+  id          String   @id @default(cuid())
+  year        Int      @unique
+  booksGoal   Int
+  dailyPages  Int
+  targetGenre String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model DailyLog {
+  date      DateTime    @id @db.Date
+  status    DailyStatus
+  createdAt DateTime    @default(now())
+  updatedAt DateTime    @updatedAt
+}
