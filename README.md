@@ -33,16 +33,28 @@ further terminal or database work is needed.
    - The **direct** connection string (no `-pooler`) → this becomes
      `DIRECT_URL`. Prisma needs the direct connection to run migrations.
 
-### 2. Generate admin credentials
+### 2. Generate a bootstrap admin credential
 
-Pick a username and a password, then hash the password locally (never commit
-the plain password anywhere):
+`ADMIN_USERNAME` / `ADMIN_PASSWORD_HASH` are only used to create the admin
+login **the first time anyone logs in**. After that, the real credential lives
+in the database, and you change it in-app (see "Change Login" below) — so
+these env vars never need to be touched again after initial setup.
+
+Pick a starting username and password, then hash the password locally (never
+commit the plain password anywhere):
 
 ```bash
 node -e "console.log(require('bcryptjs').hashSync(process.argv[1], 10))" "your-password-here"
 ```
 
 Copy the printed hash — you'll paste it as `ADMIN_PASSWORD_HASH`.
+
+> **If you're setting this in a local `.env` file**, escape every `$` in the
+> hash as `\$` (e.g. `\$2b\$10\$abc...`). Next.js's `.env` loader treats
+> `$word` as a variable reference and will silently strip parts of the hash
+> otherwise, breaking login. This only applies to `.env` files — pasting the
+> hash into the Vercel dashboard's environment variable UI does **not** need
+> escaping.
 
 Generate a random session secret too:
 
@@ -90,6 +102,9 @@ are set.
   books target, daily pages target, and (optional) target genre.
 - **Daily check-in**: in the Reading Goals panel, mark Met / Partial / Missed
   each day. Partial counts as half credit toward the derived pages-read stat.
+- **Change your login**: sign in → "Change Login" (next to Sign out) → enter
+  your current password plus a new username/password. Takes effect
+  immediately, no redeploy or env var edit needed.
 
 Everything above is a normal admin login + clicking around the deployed site —
 never a database console or a script.

@@ -1,18 +1,13 @@
 import { NextRequest, NextResponse } from "next/server";
-import bcrypt from "bcryptjs";
-import { createSessionToken, SESSION_COOKIE, SESSION_MAX_AGE } from "@/lib/auth";
+import {
+  createSessionToken,
+  getOrCreateAdminCredential,
+  verifyPassword,
+  SESSION_COOKIE,
+  SESSION_MAX_AGE,
+} from "@/lib/auth";
 
 export async function POST(req: NextRequest) {
-  const adminUsername = process.env.ADMIN_USERNAME;
-  const adminPasswordHash = process.env.ADMIN_PASSWORD_HASH;
-
-  if (!adminUsername || !adminPasswordHash) {
-    return NextResponse.json(
-      { error: "Admin login is not configured on this server." },
-      { status: 500 },
-    );
-  }
-
   let body: { username?: string; password?: string };
   try {
     body = await req.json();
@@ -28,10 +23,18 @@ export async function POST(req: NextRequest) {
     );
   }
 
-  // Compare username via bcrypt too (constant-time) so failed attempts don't
-  // leak timing information about whether the username matched.
-  const usernameMatches = username === adminUsername;
-  const passwordMatches = await bcrypt.compare(password, adminPasswordHash);
+  let credential;
+  try {
+    credential = await getOrCreateAdminCredential();
+  } catch {
+    return NextResponse.json(
+      { error: "Admin login is not configured on this server." },
+      { status: 500 },
+    );
+  }
+
+  const usernameMatches = username === credential.username;
+  const passwordMatches = await verifyPassword(password, credential.passwordHash);
 
   if (!usernameMatches || !passwordMatches) {
     return NextResponse.json(

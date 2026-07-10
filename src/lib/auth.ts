@@ -1,6 +1,8 @@
 import { SignJWT, jwtVerify } from "jose";
 import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
+import bcrypt from "bcryptjs";
+import { prisma } from "./prisma";
 
 export const SESSION_COOKIE = "dl_session";
 const SESSION_TTL_SECONDS = 60 * 60 * 24 * 7; // 7 days
@@ -52,5 +54,46 @@ export async function requireAdmin(): Promise<NextResponse | null> {
     return NextResponse.json({ error: "Admin login required." }, { status: 401 });
   }
   return null;
+}
+
+const ADMIN_ROW_ID = 1;
+
+/**
+ * Returns the admin credential row, creating it from the ADMIN_USERNAME /
+ * ADMIN_PASSWORD_HASH env vars the first time anyone logs in. After that,
+ * the env vars are only a bootstrap default — the real credential lives in
+ * the database so it can be changed in-app via the Account settings modal.
+ */
+export async function getOrCreateAdminCredential() {
+  const existing = await prisma.adminCredential.findUnique({ where: { id: ADMIN_ROW_ID } });
+  if (existing) return existing;
+
+  const bootstrapUsername = process.env.ADMIN_USERNAME;
+  const bootstrapHash = process.env.ADMIN_PASSWORD_HASH;
+  if (!bootstrapUsername || !bootstrapHash) {
+    throw new Error(
+      "No admin credential exists yet, and ADMIN_USERNAME/ADMIN_PASSWORD_HASH are not set to bootstrap one.",
+    );
+  }
+
+  return prisma.adminCredential.create({
+    data: { id: ADMIN_ROW_ID, username: bootstrapUsername, passwordHash: bootstrapHash },
+  });
+}
+
+export async function updateAdminCredential(username: string, passwordHash: string) {
+  return prisma.adminCredential.upsert({
+    where: { id: ADMIN_ROW_ID },
+    create: { id: ADMIN_ROW_ID, username, passwordHash },
+    update: { username, passwordHash },
+  });
+}
+
+export async function verifyPassword(password: string, hash: string): Promise<boolean> {
+  try {
+    return await bcrypt.compare(password, hash);
+  } catch {
+    return false;
+  }
 }
 

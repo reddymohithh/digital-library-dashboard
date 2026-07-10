@@ -39,12 +39,18 @@ export default function GoalsPanel({ onClose }: { onClose: () => void }) {
   const refresh = useCallback(async () => {
     setLoading(true);
     const [goalRes, logsRes] = await Promise.all([
-      fetch(`/api/goals/${year}`).then((r) => r.json()),
-      fetch(`/api/daily-log?year=${year}`).then((r) => r.json()),
+      fetch(`/api/goals/${year}`),
+      fetch(`/api/daily-log?year=${year}`),
     ]);
-    setGoal(goalRes.goal);
-    setStats(goalRes.stats);
-    setLogs(logsRes.logs ?? []);
+    if (goalRes.ok) {
+      const goalJson = await goalRes.json();
+      setGoal(goalJson.goal);
+      setStats(goalJson.stats);
+    }
+    if (logsRes.ok) {
+      const logsJson = await logsRes.json();
+      setLogs(logsJson.logs ?? []);
+    }
     setLoading(false);
   }, [year]);
 

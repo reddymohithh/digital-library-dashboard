@@ -18,12 +18,14 @@ export default function TopBar({
   onOpenLogin,
   onOpenAdd,
   onOpenImport,
+  onOpenAccount,
 }: {
   view: "grid" | "list";
   onViewChange: (v: "grid" | "list") => void;
   onOpenLogin: () => void;
   onOpenAdd: () => void;
   onOpenImport: () => void;
+  onOpenAccount: () => void;
 }) {
   const { isAdmin, logout } = useAdmin();
 
@@ -77,6 +79,12 @@ export default function TopBar({
         {isAdmin ? (
           <div className="flex items-center gap-2 pl-2">
             <span className="text-sm font-bold text-wood-dark">● Admin</span>
+            <button
+              onClick={onOpenAccount}
+              className="text-sm text-muted hover:text-foreground"
+            >
+              Change Login
+            </button>
             <button
               onClick={logout}
               className="text-sm text-muted hover:text-foreground"

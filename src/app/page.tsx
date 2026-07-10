@@ -13,6 +13,7 @@ import BookDetailModal from "@/components/BookDetailModal";
 import BookFormModal from "@/components/BookFormModal";
 import ImportCsvModal from "@/components/ImportCsvModal";
 import LoginModal from "@/components/LoginModal";
+import ChangeCredentialsModal from "@/components/ChangeCredentialsModal";
 import GoalsPanel from "@/components/goals/GoalsPanel";
 
 const EMPTY_FACETS: Facets = { status: [], genre: [], rating: [] };
@@ -36,6 +37,7 @@ export default function Home() {
   const [showImport, setShowImport] = useState(false);
   const [showGoals, setShowGoals] = useState(false);
   const [showLogin, setShowLogin] = useState(false);
+  const [showAccount, setShowAccount] = useState(false);
 
   useEffect(() => {
     const t = setTimeout(() => setDebouncedSearch(search), 300);
@@ -58,8 +60,9 @@ export default function Home() {
     if (debouncedSearch) params.set("search", debouncedSearch);
 
     const res = await fetch(`/api/books?${params.toString()}`);
-    const json = await res.json();
-    setData(json);
+    if (res.ok) {
+      setData(await res.json());
+    }
     setLoading(false);
   }, [filters, sort, page, debouncedSearch]);
 
@@ -89,6 +92,7 @@ export default function Home() {
           setShowForm(true);
         }}
         onOpenImport={() => setShowImport(true)}
+        onOpenAccount={() => setShowAccount(true)}
       />
 
       <div className="flex flex-1">
@@ -176,6 +180,8 @@ export default function Home() {
       {showGoals && <GoalsPanel onClose={() => setShowGoals(false)} />}
 
       {showLogin && <LoginModal onClose={() => setShowLogin(false)} />}
+
+      {showAccount && <ChangeCredentialsModal onClose={() => setShowAccount(false)} />}
     </div>
   );
 }
