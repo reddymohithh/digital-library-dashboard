@@ -3,7 +3,9 @@
 A personal reading tracker: browse a library, manage it (add/edit/import) as an
 admin, and track yearly reading goals with a daily check-in, calendar, and
 year-in-review stats. Built with Next.js, Prisma, and Postgres, deployed on
-Vercel. See [`PRD.md`](PRD.md) for the full product spec.
+Vercel. See [`PRD.md`](PRD.md) for the full product spec, and
+[`CONTRIBUTING.md`](CONTRIBUTING.md) for how to safely make changes later —
+including in a brand new chat with no memory of this one.
 
 The original design exploration (a static, localStorage-only prototype) lives
 in [`design-reference/`](design-reference) — it validated the layout and

@@ -38,10 +38,10 @@ export default function Sidebar({
 
   return (
     <aside className="flex w-[224px] shrink-0 flex-col bg-panel-muted border-r border-border">
-      <div className="shrink-0 px-4 pt-3.5 pb-2.5">
+      <div className="shrink-0 border-b border-border px-4 py-2.5">
         <button
           onClick={onOpenGoals}
-          className="flex h-8 w-full items-center justify-center gap-1 rounded-md border border-border-soft bg-panel-soft text-[12px] font-bold uppercase tracking-wide text-wood shadow-sm hover:bg-panel"
+          className="flex h-9 w-full items-center justify-center gap-1 rounded-md border border-border-soft bg-panel-soft text-[12px] font-bold uppercase tracking-wide text-wood shadow-sm hover:bg-panel"
         >
           🎯 Reading Goals
         </button>
