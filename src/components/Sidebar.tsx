@@ -37,22 +37,20 @@ export default function Sidebar({
   const ratingCounts = new Map(facets.rating.map((r) => [r.value, r.count]));
 
   return (
-    <aside className="flex w-[224px] shrink-0 flex-col border-r border-border bg-panel-muted">
-      <div className="flex h-16 shrink-0 items-center border-b border-border px-4">
+    <aside className="flex w-[224px] shrink-0 flex-col bg-panel-muted border-r border-border">
+      <div className="shrink-0 px-4 pt-3.5 pb-2.5">
         <button
           onClick={onOpenGoals}
-          className="flex h-10 w-full items-center justify-center rounded-lg border border-wood/30 bg-panel text-sm font-bold uppercase tracking-wide text-wood-dark shadow-sm transition hover:bg-wood hover:text-white"
+          className="flex h-8 w-full items-center justify-center gap-1 rounded-md border border-border-soft bg-panel-soft text-[12px] font-bold uppercase tracking-wide text-wood shadow-sm hover:bg-panel"
         >
           🎯 Reading Goals
         </button>
       </div>
 
-      <div className="flex-1 overflow-y-auto px-4 pt-4 pb-6">
-        <div className="mb-6">
-          <div className="mb-2 text-[11px] font-bold uppercase tracking-wider text-muted">
-            Status
-          </div>
-          <div className="flex flex-col gap-1">
+      <div className="flex-1 overflow-y-auto px-4 pb-3.5">
+        <div className="mb-4">
+          <SectionLabel>Status</SectionLabel>
+          <div className="flex flex-col">
             <FilterRow
               label="All Books"
               count={totalBooks}
@@ -71,11 +69,9 @@ export default function Sidebar({
           </div>
         </div>
 
-        <div className="mb-6">
-          <div className="mb-2 text-[11px] font-bold uppercase tracking-wider text-muted">
-            Genre
-          </div>
-          <div className="flex flex-col gap-1">
+        <div className="mb-4">
+          <SectionLabel>Genre</SectionLabel>
+          <div className="flex flex-col">
             <FilterRow
               label="All Genres"
               count={totalBooks}
@@ -95,10 +91,8 @@ export default function Sidebar({
         </div>
 
         <div>
-          <div className="mb-2 text-[11px] font-bold uppercase tracking-wider text-muted">
-            Rating
-          </div>
-          <div className="flex flex-col gap-1">
+          <SectionLabel>Rating</SectionLabel>
+          <div className="flex flex-col">
             <FilterRow
               label="All Ratings"
               count={totalBooks}
@@ -121,6 +115,17 @@ export default function Sidebar({
   );
 }
 
+function SectionLabel({ children }: { children: React.ReactNode }) {
+  return (
+    <div
+      className="mb-[9px] text-[10px] font-bold uppercase text-muted-light"
+      style={{ letterSpacing: "0.1em" }}
+    >
+      {children}
+    </div>
+  );
+}
+
 function FilterRow({
   label,
   count,
@@ -135,12 +140,12 @@ function FilterRow({
   return (
     <button
       onClick={onClick}
-      className={`flex items-center justify-between rounded-md px-3 py-1.5 text-left text-sm transition ${
-        active ? "bg-wood-dark text-white font-bold" : "text-foreground/80 hover:bg-panel"
+      className={`mb-0.5 flex w-full items-center justify-between rounded-md px-2.5 py-[7px] text-left text-[13px] ${
+        active ? "bg-wood font-bold text-white" : "bg-transparent text-muted-dark hover:bg-panel"
       }`}
     >
       <span>{label}</span>
-      <span className={active ? "text-white/80" : "text-muted"}>{count}</span>
+      <span className={active ? "text-white/80" : "text-muted-light"}>{count}</span>
     </button>
   );
 }

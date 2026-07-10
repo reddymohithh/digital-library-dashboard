@@ -18,9 +18,9 @@ export default function ContentHeader({
   total: number;
 }) {
   return (
-    <div className="flex h-16 shrink-0 items-center gap-3 border-b border-border px-6">
-      <div className="flex h-10 max-w-sm flex-1 items-center gap-2 rounded-md border border-border bg-panel px-3">
-        <span className="text-muted">🔍</span>
+    <div className="flex shrink-0 items-center gap-2.5 border-b border-border bg-panel px-6 py-2.5">
+      <div className="flex h-9 flex-1 items-center gap-2 rounded-lg border border-border-soft bg-panel-soft px-3">
+        <span className="text-muted-light">🔍</span>
         <input
           value={search}
           onChange={(e) => onSearchChange(e.target.value)}
@@ -28,13 +28,13 @@ export default function ContentHeader({
           className="h-full w-full bg-transparent text-sm outline-none"
         />
       </div>
-      <span className="text-sm text-muted">
+      <span className="whitespace-nowrap text-[13px] text-muted-light">
         {shown} of {total}
       </span>
       <select
         value={sort}
         onChange={(e) => onSortChange(e.target.value)}
-        className="ml-auto h-10 rounded-md border border-border bg-panel px-3 text-sm"
+        className="h-9 cursor-pointer rounded-md border border-border-soft bg-panel-soft px-2.5 text-[13px] text-muted-dark outline-none"
       >
         {SORT_OPTIONS.map((opt) => (
           <option key={opt.value} value={opt.value}>

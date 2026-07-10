@@ -43,64 +43,69 @@ export default function GoalForm({
   }
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-3">
-      <div className="grid grid-cols-2 gap-3">
+    <form onSubmit={handleSubmit} className="space-y-2.5">
+      <div className="grid grid-cols-2 gap-2.5">
         <div>
-          <label className="block text-xs font-bold uppercase tracking-wide text-muted">
-            Books goal for {year}
-          </label>
+          <FieldLabel>Books goal for {year}</FieldLabel>
           <input
             type="number"
             min={1}
             value={booksGoal}
             onChange={(e) => setBooksGoal(e.target.value)}
             required
-            className="mt-1 w-full rounded-lg border border-border px-3 py-2 text-sm focus:border-wood focus:outline-none"
+            className="mt-1 w-full rounded-lg border border-border-soft px-2.5 py-1.5 text-[13px] focus:border-wood focus:outline-none"
           />
         </div>
         <div>
-          <label className="block text-xs font-bold uppercase tracking-wide text-muted">
-            Daily pages goal
-          </label>
+          <FieldLabel>Daily pages goal</FieldLabel>
           <input
             type="number"
             min={1}
             value={dailyPages}
             onChange={(e) => setDailyPages(e.target.value)}
             required
-            className="mt-1 w-full rounded-lg border border-border px-3 py-2 text-sm focus:border-wood focus:outline-none"
+            className="mt-1 w-full rounded-lg border border-border-soft px-2.5 py-1.5 text-[13px] focus:border-wood focus:outline-none"
           />
         </div>
       </div>
       <div>
-        <label className="block text-xs font-bold uppercase tracking-wide text-muted">
-          Target genre (optional)
-        </label>
+        <FieldLabel>Target genre (optional)</FieldLabel>
         <input
           type="text"
           placeholder="e.g. Fiction — doesn't affect any analysis"
           value={targetGenre}
           onChange={(e) => setTargetGenre(e.target.value)}
-          className="mt-1 w-full rounded-lg border border-border px-3 py-2 text-sm focus:border-wood focus:outline-none"
+          className="mt-1 w-full rounded-lg border border-border-soft px-2.5 py-1.5 text-[13px] focus:border-wood focus:outline-none"
         />
       </div>
-      {error && <p className="text-sm text-accent-red">{error}</p>}
+      {error && <p className="text-[13px] text-accent-red">{error}</p>}
       <div className="flex gap-2">
         <button
           type="submit"
           disabled={saving}
-          className="rounded-md bg-wood-dark px-4 py-2 text-sm font-bold text-white hover:bg-wood disabled:opacity-60"
+          className="rounded-[7px] bg-wood px-3.5 py-2 text-[13px] font-bold text-white hover:opacity-90 disabled:opacity-60"
         >
           {saving ? "Saving…" : "Save Goal"}
         </button>
         <button
           type="button"
           onClick={onCancel}
-          className="rounded-md border border-border px-4 py-2 text-sm text-muted hover:bg-panel-muted"
+          className="rounded-[7px] border border-border-soft px-3.5 py-2 text-[13px] text-muted hover:bg-panel-muted"
         >
           Cancel
         </button>
       </div>
     </form>
+  );
+}
+
+function FieldLabel({ children }: { children: React.ReactNode }) {
+  return (
+    <label
+      className="block text-[10px] font-bold uppercase text-muted-light"
+      style={{ letterSpacing: "0.08em" }}
+    >
+      {children}
+    </label>
   );
 }

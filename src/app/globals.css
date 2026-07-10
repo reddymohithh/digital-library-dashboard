@@ -2,16 +2,25 @@
 
 :root {
   --background: #faf7f2;
-  --foreground: #2a2118;
+  --foreground: #2c1e10;
   --wood: #7c5535;
-  --wood-dark: #5f4128;
+  /* The reference design uses a single wood accent for every active/primary
+     state (no separate darker shade) — kept as an alias so existing
+     bg-wood-dark/text-wood-dark usages still resolve to the exact same color
+     without touching every component that references it. */
+  --wood-dark: #7c5535;
   --panel: #ffffff;
+  --panel-soft: #faf7f2;
   --panel-muted: #f5efe5;
-  --border: #e5dccb;
+  --border: #e8ddd0;
+  --border-soft: #e0d0bc;
   --muted: #9a8878;
-  --accent-green: #3f7d4d;
+  --muted-light: #c0a890;
+  --muted-dark: #7a6a58;
+  --accent-green: #3d7a54;
   --accent-orange: #c98a2c;
   --accent-red: #b0453f;
+  --accent-gold: #c8a060;
   --font-sans: var(--font-lato);
   --font-serif: var(--font-playfair);
 }
@@ -22,12 +31,17 @@
   --color-wood: var(--wood);
   --color-wood-dark: var(--wood-dark);
   --color-panel: var(--panel);
+  --color-panel-soft: var(--panel-soft);
   --color-panel-muted: var(--panel-muted);
   --color-border: var(--border);
+  --color-border-soft: var(--border-soft);
   --color-muted: var(--muted);
+  --color-muted-light: var(--muted-light);
+  --color-muted-dark: var(--muted-dark);
   --color-accent-green: var(--accent-green);
   --color-accent-orange: var(--accent-orange);
   --color-accent-red: var(--accent-red);
+  --color-accent-gold: var(--accent-gold);
   --font-sans: var(--font-lato);
   --font-serif: var(--font-playfair);
 }
@@ -45,9 +59,9 @@ body {
 .cover-placeholder {
   background-image: repeating-linear-gradient(
     135deg,
-    #ddd 0,
-    #ddd 2px,
-    #eee 2px,
-    #eee 10px
+    #d4ccc2 0,
+    #d4ccc2 2px,
+    #e8e2d8 2px,
+    #e8e2d8 10px
   );
 }

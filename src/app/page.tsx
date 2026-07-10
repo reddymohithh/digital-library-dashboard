@@ -123,7 +123,13 @@ export default function Home() {
                 {isAdmin && " Add one, or import a CSV, using the buttons above."}
               </p>
             ) : view === "grid" ? (
-              <div className="grid grid-cols-2 gap-5 p-6 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-7">
+              <div
+                className="grid p-6"
+                style={{
+                  gridTemplateColumns: "repeat(auto-fill, minmax(142px, 1fr))",
+                  gap: "22px",
+                }}
+              >
                 {books.map((book) => (
                   <BookCard key={book.id} book={book} onClick={() => setSelectedBook(book)} />
                 ))}

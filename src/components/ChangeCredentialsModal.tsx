@@ -42,31 +42,33 @@ export default function ChangeCredentialsModal({ onClose }: { onClose: () => voi
       onClick={onClose}
     >
       <div
-        className="w-full max-w-sm rounded-2xl bg-panel p-6 shadow-xl"
+        className="w-full max-w-[360px] rounded-[14px] bg-panel-soft p-6 shadow-2xl"
         onClick={(e) => e.stopPropagation()}
       >
         <div className="mb-4 flex items-center justify-between">
-          <h2 className="font-serif-heading text-xl font-bold">Change Login</h2>
-          <button onClick={onClose} aria-label="Close" className="text-lg">
+          <h2 className="font-serif-heading text-[17px] font-bold text-foreground">
+            Change Login
+          </h2>
+          <button onClick={onClose} aria-label="Close" className="text-base text-muted">
             ✕
           </button>
         </div>
 
         {success ? (
-          <div className="space-y-4">
-            <p className="text-sm text-accent-green">
-              Your login has been updated. Use the new username and password next time
-              you sign in.
+          <div className="space-y-3.5">
+            <p className="text-[13px] text-accent-green">
+              Your login has been updated. Use the new username and password next time you
+              sign in.
             </p>
             <button
               onClick={onClose}
-              className="w-full rounded-md bg-wood-dark py-2.5 text-sm font-bold text-white hover:bg-wood"
+              className="w-full rounded-[7px] bg-wood py-[11px] text-[13px] font-bold text-white hover:opacity-90"
             >
               Done
             </button>
           </div>
         ) : (
-          <form onSubmit={handleSubmit} className="space-y-4">
+          <form onSubmit={handleSubmit} className="space-y-3.5">
             <Field
               label="Current Password"
               type="password"
@@ -100,12 +102,12 @@ export default function ChangeCredentialsModal({ onClose }: { onClose: () => voi
               required
             />
 
-            {error && <p className="text-sm text-accent-red">{error}</p>}
+            {error && <p className="text-[13px] text-accent-red">{error}</p>}
 
             <button
               type="submit"
               disabled={submitting}
-              className="w-full rounded-md bg-wood-dark py-2.5 text-sm font-bold text-white hover:bg-wood disabled:opacity-60"
+              className="w-full rounded-[7px] bg-wood py-[11px] text-[13px] font-bold text-white hover:opacity-90 disabled:opacity-60"
             >
               {submitting ? "Saving…" : "Save"}
             </button>
@@ -133,7 +135,10 @@ function Field({
 }) {
   return (
     <div>
-      <label className="block text-xs font-bold uppercase tracking-wide text-muted">
+      <label
+        className="block text-[10px] font-bold uppercase text-muted-light"
+        style={{ letterSpacing: "0.08em" }}
+      >
         {label}
       </label>
       <input
@@ -142,7 +147,7 @@ function Field({
         onChange={(e) => onChange(e.target.value)}
         autoComplete={autoComplete}
         required={required}
-        className="mt-1 w-full rounded-lg border border-border px-3 py-2 text-sm focus:border-wood focus:outline-none"
+        className="mt-1 w-full rounded-lg border border-border-soft px-3 py-2 text-[13px] focus:border-wood focus:outline-none"
       />
     </div>
   );

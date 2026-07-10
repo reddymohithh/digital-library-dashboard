@@ -30,19 +30,23 @@ export default function LoginModal({ onClose }: { onClose: () => void }) {
       onClick={onClose}
     >
       <div
-        className="w-full max-w-sm rounded-2xl bg-panel p-8 shadow-xl"
+        className="w-full max-w-[340px] rounded-[14px] bg-panel-soft p-7 shadow-2xl"
         onClick={(e) => e.stopPropagation()}
       >
-        <h2 className="font-serif-heading text-2xl font-bold text-center">
+        <h2 className="font-serif-heading text-center text-[19px] font-bold text-foreground">
           📚 Admin Login
         </h2>
-        <p className="mt-2 text-center text-sm text-muted">
+        <p className="mt-1.5 text-center text-[13px] text-muted">
           Sign in to manage the library.
         </p>
 
-        <form onSubmit={handleSubmit} className="mt-6 space-y-4">
+        <form onSubmit={handleSubmit} className="mt-5 space-y-3.5">
           <div>
-            <label htmlFor="username" className="block text-xs font-bold uppercase tracking-wide text-muted">
+            <label
+              htmlFor="username"
+              className="block text-[10px] font-bold uppercase text-muted-light"
+              style={{ letterSpacing: "0.08em" }}
+            >
               Username
             </label>
             <input
@@ -51,12 +55,16 @@ export default function LoginModal({ onClose }: { onClose: () => void }) {
               autoComplete="username"
               value={username}
               onChange={(e) => setUsername(e.target.value)}
-              className="mt-1 w-full rounded-lg border border-border px-3 py-2.5 text-sm focus:border-wood focus:outline-none"
+              className="mt-1 w-full rounded-lg border border-border-soft px-3 py-2 text-[13px] focus:border-wood focus:outline-none"
               required
             />
           </div>
           <div>
-            <label htmlFor="password" className="block text-xs font-bold uppercase tracking-wide text-muted">
+            <label
+              htmlFor="password"
+              className="block text-[10px] font-bold uppercase text-muted-light"
+              style={{ letterSpacing: "0.08em" }}
+            >
               Password
             </label>
             <input
@@ -65,26 +73,24 @@ export default function LoginModal({ onClose }: { onClose: () => void }) {
               autoComplete="current-password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="mt-1 w-full rounded-lg border border-border px-3 py-2.5 text-sm focus:border-wood focus:outline-none"
+              className="mt-1 w-full rounded-lg border border-border-soft px-3 py-2 text-[13px] focus:border-wood focus:outline-none"
               required
             />
           </div>
 
-          {error && (
-            <div className="text-center text-sm text-accent-red">{error}</div>
-          )}
+          {error && <div className="text-center text-[13px] text-accent-red">{error}</div>}
 
           <button
             type="submit"
             disabled={submitting}
-            className="w-full rounded-lg bg-wood py-2.5 text-sm font-bold text-white transition hover:bg-wood-dark disabled:opacity-60"
+            className="w-full rounded-[7px] bg-wood py-[11px] text-[13px] font-bold text-white hover:opacity-90 disabled:opacity-60"
           >
             {submitting ? "Signing in…" : "Sign In"}
           </button>
           <button
             type="button"
             onClick={onClose}
-            className="w-full rounded-lg border border-border py-2.5 text-sm text-muted transition hover:bg-panel-muted"
+            className="w-full rounded-[7px] border border-border-soft bg-panel-soft py-[11px] text-[13px] text-muted hover:bg-panel-muted"
           >
             Cancel
           </button>

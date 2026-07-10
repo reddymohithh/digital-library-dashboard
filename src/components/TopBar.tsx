@@ -44,8 +44,11 @@ export default function TopBar({
   }, [menuOpen]);
 
   return (
-    <div className="flex h-16 shrink-0 items-center gap-3 border-b border-wood-dark/80 bg-panel-muted px-6">
-      <span className="font-serif-heading text-xl font-bold text-foreground">
+    <div className="flex h-14 shrink-0 items-center gap-3 border-b border-border bg-panel px-6">
+      <span
+        className="font-serif-heading whitespace-nowrap text-[21px] font-bold text-foreground"
+        style={{ letterSpacing: "-0.02em" }}
+      >
         📚 My Library
       </span>
 
@@ -53,10 +56,10 @@ export default function TopBar({
         <button
           onClick={() => onViewChange("grid")}
           aria-label="Grid view"
-          className={`flex h-[34px] w-[34px] items-center justify-center rounded-md border text-sm ${
+          className={`flex h-8 w-8 items-center justify-center rounded-md border text-[15px] ${
             view === "grid"
-              ? "border-wood-dark bg-wood-dark text-white"
-              : "border-border bg-panel text-foreground/70"
+              ? "border-border-soft bg-wood text-white"
+              : "border-border-soft bg-panel-muted text-wood"
           }`}
         >
           ⊞
@@ -64,10 +67,10 @@ export default function TopBar({
         <button
           onClick={() => onViewChange("list")}
           aria-label="List view"
-          className={`flex h-[34px] w-[34px] items-center justify-center rounded-md border text-sm ${
+          className={`flex h-8 w-8 items-center justify-center rounded-md border text-[15px] ${
             view === "list"
-              ? "border-wood-dark bg-wood-dark text-white"
-              : "border-border bg-panel text-foreground/70"
+              ? "border-border-soft bg-wood text-white"
+              : "border-border-soft bg-panel-muted text-wood"
           }`}
         >
           ☰
@@ -77,13 +80,13 @@ export default function TopBar({
           <>
             <button
               onClick={onOpenImport}
-              className="rounded-md border border-border bg-panel px-3 py-1.5 text-sm font-medium text-foreground/80 hover:bg-panel-muted"
+              className="rounded-md border border-border-soft bg-panel-soft px-3.5 py-[7px] text-[13px] text-muted-dark hover:bg-panel-muted"
             >
               ↑ Import CSV
             </button>
             <button
               onClick={onOpenAdd}
-              className="rounded-md bg-wood-dark px-3 py-1.5 text-sm font-bold text-white hover:bg-wood"
+              className="rounded-md bg-wood px-3.5 py-[7px] text-[13px] font-bold text-white hover:opacity-90"
             >
               + Add Book
             </button>
@@ -94,7 +97,7 @@ export default function TopBar({
           <div className="relative pl-2" ref={menuRef}>
             <button
               onClick={() => setMenuOpen((v) => !v)}
-              className="flex items-center gap-1.5 rounded-md border border-border bg-panel px-3 py-1.5 text-sm font-bold text-wood-dark hover:bg-panel-muted"
+              className="flex items-center gap-1.5 rounded-md border border-border-soft bg-panel-soft px-3 py-1.5 text-[12px] font-bold text-wood hover:bg-panel-muted"
             >
               ● Admin <span className="text-xs text-muted">▾</span>
             </button>
@@ -125,7 +128,7 @@ export default function TopBar({
           <button
             onClick={onOpenLogin}
             aria-label="Admin login"
-            className="flex h-[34px] w-[34px] items-center justify-center rounded-md border border-border bg-panel text-base"
+            className="flex h-[30px] w-[30px] items-center justify-center rounded-md border border-border bg-panel-soft text-sm text-muted-light"
           >
             🔐
           </button>

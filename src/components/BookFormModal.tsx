@@ -110,29 +110,33 @@ export default function BookFormModal({
       onClick={onClose}
     >
       <div
-        className="max-h-[90vh] w-full max-w-2xl overflow-y-auto rounded-2xl bg-panel p-6 shadow-xl"
+        className="max-h-[88vh] w-full max-w-xl overflow-y-auto rounded-[14px] bg-panel-soft shadow-2xl"
         onClick={(e) => e.stopPropagation()}
       >
-        <div className="mb-4 flex items-center justify-between">
-          <h2 className="font-serif-heading text-xl font-bold">
+        <div className="flex items-center justify-between rounded-t-[14px] border-b border-border bg-panel px-6 py-[18px]">
+          <h2 className="font-serif-heading text-[17px] font-bold text-foreground">
             {isEdit ? "Edit Book" : "Add Book"}
           </h2>
-          <button onClick={onClose} aria-label="Close" className="text-lg">
+          <button
+            onClick={onClose}
+            aria-label="Close"
+            className="flex h-7 w-7 items-center justify-center rounded-full text-lg text-muted hover:bg-panel-muted"
+          >
             ✕
           </button>
         </div>
 
-        <form onSubmit={handleSubmit} className="grid grid-cols-2 gap-4">
+        <form onSubmit={handleSubmit} className="grid grid-cols-2 gap-3.5 p-6">
           <TextField label="Title *" placeholder="e.g. Sapiens" value={form.title} onChange={(v) => set("title", v)} required className="col-span-2" />
           <TextField label="Author" placeholder="e.g. Yuval Noah Harari" value={form.author} onChange={(v) => set("author", v)} />
           <div>
-            <label className="block text-xs font-bold uppercase tracking-wide text-muted">Genre</label>
+            <FieldLabel>Genre</FieldLabel>
             <input
               list="genre-options"
               placeholder="e.g. Non-Fiction"
               value={form.genre}
               onChange={(e) => set("genre", e.target.value)}
-              className="mt-1 w-full rounded-lg border border-border px-3 py-2 text-sm focus:border-wood focus:outline-none"
+              className="mt-1 w-full rounded-lg border border-border-soft px-3 py-2 text-[13px] focus:border-wood focus:outline-none"
             />
             <datalist id="genre-options">
               {genreOptions.map((g) => (
@@ -176,20 +180,20 @@ export default function BookFormModal({
           <TextAreaField label="Description" placeholder="What's this book about?" value={form.description} onChange={(v) => set("description", v)} className="col-span-2" />
           <TextAreaField label="Notes" placeholder="Your personal notes or review" value={form.notes} onChange={(v) => set("notes", v)} className="col-span-2" />
 
-          {error && <div className="col-span-2 text-sm text-accent-red">{error}</div>}
+          {error && <div className="col-span-2 text-[13px] text-accent-red">{error}</div>}
 
-          <div className="col-span-2 flex gap-2 pt-2">
+          <div className="col-span-2 flex gap-2 pt-1">
             <button
               type="submit"
               disabled={submitting}
-              className="rounded-md bg-wood-dark px-4 py-2 text-sm font-bold text-white hover:bg-wood disabled:opacity-60"
+              className="rounded-[7px] bg-wood px-4 py-[11px] text-[13px] font-bold text-white hover:opacity-90 disabled:opacity-60"
             >
               {submitting ? "Saving…" : isEdit ? "Save Changes" : "Add Book"}
             </button>
             <button
               type="button"
               onClick={onClose}
-              className="rounded-md border border-border px-4 py-2 text-sm text-muted hover:bg-panel-muted"
+              className="rounded-[7px] border border-border-soft bg-panel-soft px-5 py-[11px] text-[13px] text-muted hover:bg-panel-muted"
             >
               Cancel
             </button>
@@ -197,6 +201,17 @@ export default function BookFormModal({
         </form>
       </div>
     </div>
+  );
+}
+
+function FieldLabel({ children }: { children: React.ReactNode }) {
+  return (
+    <label
+      className="block text-[10px] font-bold uppercase text-muted-light"
+      style={{ letterSpacing: "0.08em" }}
+    >
+      {children}
+    </label>
   );
 }
 
@@ -219,16 +234,14 @@ function TextField({
 }) {
   return (
     <div className={className}>
-      <label className="block text-xs font-bold uppercase tracking-wide text-muted">
-        {label}
-      </label>
+      <FieldLabel>{label}</FieldLabel>
       <input
         type={type}
         value={value}
         placeholder={placeholder}
         required={required}
         onChange={(e) => onChange(e.target.value)}
-        className="mt-1 w-full rounded-lg border border-border px-3 py-2 text-sm focus:border-wood focus:outline-none"
+        className="mt-1 w-full rounded-lg border border-border-soft px-3 py-2 text-[13px] focus:border-wood focus:outline-none"
       />
     </div>
   );
@@ -249,15 +262,13 @@ function TextAreaField({
 }) {
   return (
     <div className={className}>
-      <label className="block text-xs font-bold uppercase tracking-wide text-muted">
-        {label}
-      </label>
+      <FieldLabel>{label}</FieldLabel>
       <textarea
         value={value}
         placeholder={placeholder}
         onChange={(e) => onChange(e.target.value)}
         rows={3}
-        className="mt-1 w-full rounded-lg border border-border px-3 py-2 text-sm focus:border-wood focus:outline-none"
+        className="mt-1 w-full rounded-lg border border-border-soft px-3 py-2 text-[13px] focus:border-wood focus:outline-none"
       />
     </div>
   );
@@ -276,13 +287,11 @@ function SelectField({
 }) {
   return (
     <div>
-      <label className="block text-xs font-bold uppercase tracking-wide text-muted">
-        {label}
-      </label>
+      <FieldLabel>{label}</FieldLabel>
       <select
         value={value}
         onChange={(e) => onChange(e.target.value)}
-        className="mt-1 w-full rounded-lg border border-border bg-panel px-3 py-2 text-sm focus:border-wood focus:outline-none"
+        className="mt-1 w-full rounded-lg border border-border-soft bg-panel-soft px-3 py-2 text-[13px] focus:border-wood focus:outline-none"
       >
         {options.map((opt) => (
           <option key={opt.value} value={opt.value}>

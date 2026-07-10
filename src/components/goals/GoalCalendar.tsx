@@ -46,24 +46,24 @@ export default function GoalCalendar({
 
   return (
     <div>
-      <div className="mb-3 flex items-center justify-between">
+      <div className="mb-2.5 flex items-center justify-between">
         <button
           onClick={() => onMonthChange(new Date(Date.UTC(year, monthIndex - 1, 1)))}
-          className="flex h-8 w-8 items-center justify-center rounded-full border border-border"
+          className="flex h-6 w-6 items-center justify-center rounded-full border border-border text-muted-dark"
         >
           ‹
         </button>
-        <span className="font-serif-heading font-bold">
+        <span className="font-serif-heading text-[13px] font-bold text-foreground">
           {MONTH_NAMES[monthIndex]} {year}
         </span>
         <button
           onClick={() => onMonthChange(new Date(Date.UTC(year, monthIndex + 1, 1)))}
-          className="flex h-8 w-8 items-center justify-center rounded-full border border-border"
+          className="flex h-6 w-6 items-center justify-center rounded-full border border-border text-muted-dark"
         >
           ›
         </button>
       </div>
-      <div className="grid grid-cols-7 gap-1 text-center text-xs text-muted">
+      <div className="grid grid-cols-7 gap-1 text-center text-[10px] text-muted-light">
         {["M", "T", "W", "T", "F", "S", "S"].map((d, i) => (
           <div key={i}>{d}</div>
         ))}
@@ -77,19 +77,19 @@ export default function GoalCalendar({
           return (
             <div
               key={i}
-              className={`mx-auto flex h-9 w-9 items-center justify-center rounded-full text-sm ${
-                status ? STATUS_COLOR[status] : "text-foreground/70"
-              } ${isToday && !status ? "border-2 border-wood-dark" : ""}`}
+              className={`mx-auto flex h-7 w-7 items-center justify-center rounded-full text-[11px] ${
+                status ? STATUS_COLOR[status] : "text-muted-dark"
+              } ${isToday && !status ? "border-2 border-wood" : ""}`}
             >
               {day}
             </div>
           );
         })}
       </div>
-      <div className="mt-3 flex gap-4 text-xs text-muted">
-        <span><span className="inline-block h-2.5 w-2.5 rounded-full bg-accent-green" /> Met</span>
-        <span><span className="inline-block h-2.5 w-2.5 rounded-full bg-accent-orange" /> Partial</span>
-        <span><span className="inline-block h-2.5 w-2.5 rounded-full bg-accent-red" /> Missed</span>
+      <div className="mt-3 flex gap-3 text-[11px] text-muted">
+        <span><span className="inline-block h-2 w-2 rounded-full bg-accent-green" /> Met</span>
+        <span><span className="inline-block h-2 w-2 rounded-full bg-accent-orange" /> Partial</span>
+        <span><span className="inline-block h-2 w-2 rounded-full bg-accent-red" /> Missed</span>
       </div>
     </div>
   );

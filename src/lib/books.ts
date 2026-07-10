@@ -3,7 +3,7 @@ import type { Format, Status } from "@prisma/client";
 
 /** Shared column template so the list-view header and rows always line up. */
 export const BOOK_LIST_GRID_COLS =
-  "grid-cols-[48px_minmax(0,2.5fr)_minmax(0,2fr)_minmax(0,1.4fr)_110px_100px_80px]";
+  "grid-cols-[48px_minmax(0,3fr)_minmax(0,2fr)_minmax(0,1.4fr)_110px_100px]";
 
 export const STATUS_CSV_TO_ENUM: Record<string, Status> = {
   reading: "READING",
@@ -21,6 +21,15 @@ export const STATUS_ENUM_TO_CSV: Record<Status, string> = {
   DNF: "dnf",
   ON_HOLD: "on-hold",
   RE_READING: "re-reading",
+};
+
+export const STATUS_BADGE_COLORS: Record<Status, string> = {
+  FINISHED: "#3d7a54",
+  READING: "#3a5f8a",
+  WANT_TO_READ: "#7a6a58",
+  ON_HOLD: "#b07028",
+  DNF: "#a0483c",
+  RE_READING: "#6a5590",
 };
 
 export const STATUS_LABELS: Record<Status, string> = {

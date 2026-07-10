@@ -13,7 +13,6 @@ export default function BookListHeader() {
       <span>Genre</span>
       <span>Status</span>
       <span>Rating</span>
-      <span>Pages</span>
     </div>
   );
 }

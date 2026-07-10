@@ -1,6 +1,6 @@
 "use client";
 
-import { BOOK_LIST_GRID_COLS, ratingStars, STATUS_LABELS } from "@/lib/books";
+import { BOOK_LIST_GRID_COLS, ratingStars, STATUS_BADGE_COLORS, STATUS_LABELS } from "@/lib/books";
 import type { BookDTO } from "@/lib/types";
 
 export default function BookListRow({
@@ -10,8 +10,6 @@ export default function BookListRow({
   book: BookDTO;
   onClick: () => void;
 }) {
-  const isFinished = book.status === "FINISHED";
-
   return (
     <button
       onClick={onClick}
@@ -25,20 +23,22 @@ export default function BookListRow({
           <div className="cover-placeholder h-full w-full" />
         )}
       </div>
-      <div className="min-w-0 truncate text-sm font-bold">{book.title}</div>
-      <div className="min-w-0 truncate text-sm text-muted">{book.author}</div>
-      <div className="min-w-0 truncate text-sm text-muted">{book.genre ?? "—"}</div>
+      <div className="font-serif-heading min-w-0 truncate text-[13px] font-bold text-foreground">
+        {book.title}
+      </div>
+      <div className="min-w-0 truncate text-[13px] text-muted">{book.author}</div>
+      <div className="min-w-0 truncate text-[13px] text-muted">{book.genre ?? "—"}</div>
       <div>
         <span
-          className={`w-fit rounded-full px-2 py-0.5 text-[11px] ${
-            isFinished ? "bg-wood-dark text-white" : "border border-border text-muted"
-          }`}
+          className="w-fit rounded-full text-[10px] font-bold text-white"
+          style={{ padding: "3px 9px", background: STATUS_BADGE_COLORS[book.status] }}
         >
           {STATUS_LABELS[book.status]}
         </span>
       </div>
-      <div className="text-sm text-amber-600">{ratingStars(book.rating)}</div>
-      <div className="text-sm text-muted">{book.pages ?? "—"}</div>
+      <div className="text-[13px] text-accent-gold" style={{ letterSpacing: "0.02em" }}>
+        {ratingStars(book.rating)}
+      </div>
     </button>
   );
 }

@@ -29,12 +29,14 @@ export default function ImportCsvModal({
   onClose: () => void;
   onImported: () => void;
 }) {
+  const [fileName, setFileName] = useState("");
   const [results, setResults] = useState<RowResult[] | null>(null);
   const [importing, setImporting] = useState(false);
   const [summary, setSummary] = useState<{ created: number; skipped: number } | null>(null);
   const [parseError, setParseError] = useState("");
 
   function handleFile(file: File) {
+    setFileName(file.name);
     setParseError("");
     setSummary(null);
     Papa.parse<Record<string, string>>(file, {
@@ -95,119 +97,142 @@ export default function ImportCsvModal({
       onClick={onClose}
     >
       <div
-        className="max-h-[90vh] w-full max-w-3xl overflow-y-auto rounded-2xl bg-panel p-6 shadow-xl"
+        className="max-h-[88vh] w-full max-w-2xl overflow-y-auto rounded-[14px] bg-panel-soft shadow-2xl"
         onClick={(e) => e.stopPropagation()}
       >
-        <div className="mb-4 flex items-center justify-between">
-          <h2 className="font-serif-heading text-xl font-bold">Import Books from CSV</h2>
-          <button onClick={onClose} aria-label="Close" className="text-lg">
+        <div className="flex items-center justify-between rounded-t-[14px] border-b border-border bg-panel px-6 py-[18px]">
+          <h2 className="font-serif-heading text-[17px] font-bold text-foreground">
+            Import Books from CSV
+          </h2>
+          <button
+            onClick={onClose}
+            aria-label="Close"
+            className="flex h-7 w-7 items-center justify-center rounded-full text-lg text-muted hover:bg-panel-muted"
+          >
             ✕
           </button>
         </div>
 
-        <div className="mb-4 rounded-lg border border-border bg-panel-muted p-4 text-sm">
-          <p className="mb-2">
-            Your CSV needs these columns (only <code>title</code> is required):
-          </p>
-          <code className="block overflow-x-auto whitespace-nowrap rounded bg-panel p-2 text-xs">
-            title,author,genre,year_published,pages,status,type,rating,dateStarted,dateFinished,description,notes,source
-          </code>
-          <ul className="mt-2 list-disc pl-5 text-xs text-muted">
-            <li>status: reading | want-to-read | finished | dnf | on-hold | re-reading</li>
-            <li>type: physical | audiobook | ebook</li>
-            <li>rating: 0–5 (0 = unrated)</li>
-            <li>dates: YYYY-MM-DD</li>
-          </ul>
-          <button
-            onClick={downloadTemplate}
-            className="mt-3 rounded-md border border-border bg-panel px-3 py-1.5 text-xs font-bold hover:bg-panel-muted"
-          >
-            ⬇ Download template CSV
-          </button>
-        </div>
-
-        {!summary && (
-          <div className="mb-4">
-            <input
-              type="file"
-              accept=".csv,text/csv"
-              onChange={(e) => e.target.files?.[0] && handleFile(e.target.files[0])}
-              className="text-sm"
-            />
-            {parseError && <p className="mt-2 text-sm text-accent-red">{parseError}</p>}
-          </div>
-        )}
-
-        {results && !summary && (
-          <>
-            <div className="mb-2 flex gap-4 text-sm">
-              <span className="text-accent-green">{validCount} rows ready to import</span>
-              {invalidCount > 0 && (
-                <span className="text-accent-red">{invalidCount} rows will be skipped</span>
-              )}
-            </div>
-            <div className="max-h-64 overflow-y-auto rounded-lg border border-border">
-              <table className="w-full text-left text-xs">
-                <thead className="sticky top-0 bg-panel-muted">
-                  <tr>
-                    <th className="p-2">Row</th>
-                    <th className="p-2">Title</th>
-                    <th className="p-2">Status</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {results.map((r) => (
-                    <tr key={r.row} className="border-t border-border">
-                      <td className="p-2">{r.row}</td>
-                      <td className="p-2">{r.title}</td>
-                      <td className="p-2">
-                        {r.ok ? (
-                          <span className="text-accent-green">✓ Ready</span>
-                        ) : (
-                          <span className="text-accent-red">
-                            ✗ {r.messages.join("; ")}
-                          </span>
-                        )}
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-            <div className="mt-4 flex gap-2">
-              <button
-                onClick={handleImport}
-                disabled={validCount === 0 || importing}
-                className="rounded-md bg-wood-dark px-4 py-2 text-sm font-bold text-white hover:bg-wood disabled:opacity-60"
-              >
-                {importing ? "Importing…" : `Import ${validCount} book${validCount === 1 ? "" : "s"}`}
-              </button>
-              <button
-                onClick={onClose}
-                className="rounded-md border border-border px-4 py-2 text-sm text-muted hover:bg-panel-muted"
-              >
-                Cancel
-              </button>
-            </div>
-          </>
-        )}
-
-        {summary && (
-          <div className="rounded-lg border border-border bg-panel-muted p-4 text-sm">
-            <p className="font-bold text-accent-green">
-              Imported {summary.created} book{summary.created === 1 ? "" : "s"}.
+        <div className="p-6">
+          <div className="mb-4 rounded-lg border border-border bg-panel-muted p-4 text-sm">
+            <p className="mb-2 text-[13px] font-bold uppercase tracking-wide text-muted-light">
+              Required CSV Format
             </p>
-            {summary.skipped > 0 && (
-              <p className="mt-1 text-accent-red">{summary.skipped} rows were skipped.</p>
-            )}
+            <code className="block overflow-x-auto whitespace-nowrap rounded bg-panel-soft p-2 text-xs text-muted-dark">
+              title,author,genre,year_published,pages,status,type,rating,dateStarted,dateFinished,description,notes,source
+            </code>
+            <ul className="mt-2 space-y-0.5 text-xs text-muted">
+              <li>status: reading | want-to-read | finished | dnf | on-hold | re-reading</li>
+              <li>type: physical | audiobook | ebook</li>
+              <li>rating: 0–5 (0 = unrated)</li>
+              <li>dates: YYYY-MM-DD</li>
+            </ul>
+            <p className="mt-2 text-xs text-muted">
+              Wrap fields containing commas in double quotes. Only title is required.
+            </p>
             <button
-              onClick={onClose}
-              className="mt-3 rounded-md bg-wood-dark px-4 py-2 text-sm font-bold text-white hover:bg-wood"
+              onClick={downloadTemplate}
+              className="mt-3 rounded-md border border-border-soft bg-panel-soft px-3 py-1.5 text-xs font-bold text-muted-dark hover:bg-panel"
             >
-              Done
+              ⬇ Download template CSV
             </button>
           </div>
-        )}
+
+          {!summary && (
+            <div className="mb-4">
+              <label
+                htmlFor="csv-file-input"
+                className="flex cursor-pointer items-center gap-3 rounded-lg border-2 border-dashed border-border-soft bg-panel-muted px-4 py-4 transition hover:border-wood hover:bg-panel"
+              >
+                <span className="shrink-0 rounded-md bg-wood px-4 py-2 text-[13px] font-bold text-white">
+                  Choose File
+                </span>
+                <span className="truncate text-sm text-muted">
+                  {fileName || "No file chosen — click to browse"}
+                </span>
+                <input
+                  id="csv-file-input"
+                  type="file"
+                  accept=".csv,text/csv"
+                  onChange={(e) => e.target.files?.[0] && handleFile(e.target.files[0])}
+                  className="hidden"
+                />
+              </label>
+              {parseError && <p className="mt-2 text-sm text-accent-red">{parseError}</p>}
+            </div>
+          )}
+
+          {results && !summary && (
+            <>
+              <div className="mb-2 flex gap-4 text-sm">
+                <span className="text-accent-green">{validCount} rows ready to import</span>
+                {invalidCount > 0 && (
+                  <span className="text-accent-red">{invalidCount} rows will be skipped</span>
+                )}
+              </div>
+              <div className="max-h-64 overflow-y-auto rounded-lg border border-border">
+                <table className="w-full text-left text-xs">
+                  <thead className="sticky top-0 bg-panel-muted">
+                    <tr>
+                      <th className="p-2">Row</th>
+                      <th className="p-2">Title</th>
+                      <th className="p-2">Status</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {results.map((r) => (
+                      <tr key={r.row} className="border-t border-border">
+                        <td className="p-2">{r.row}</td>
+                        <td className="p-2">{r.title}</td>
+                        <td className="p-2">
+                          {r.ok ? (
+                            <span className="text-accent-green">✓ Ready</span>
+                          ) : (
+                            <span className="text-accent-red">✗ {r.messages.join("; ")}</span>
+                          )}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+              <div className="mt-4 flex gap-2">
+                <button
+                  onClick={handleImport}
+                  disabled={validCount === 0 || importing}
+                  className="rounded-[7px] bg-wood px-4 py-[11px] text-[13px] font-bold text-white hover:opacity-90 disabled:opacity-60"
+                >
+                  {importing
+                    ? "Importing…"
+                    : `Import ${validCount} book${validCount === 1 ? "" : "s"}`}
+                </button>
+                <button
+                  onClick={onClose}
+                  className="rounded-[7px] border border-border-soft bg-panel-soft px-5 py-[11px] text-[13px] text-muted hover:bg-panel-muted"
+                >
+                  Cancel
+                </button>
+              </div>
+            </>
+          )}
+
+          {summary && (
+            <div className="rounded-lg border border-border bg-panel-muted p-4 text-sm">
+              <p className="font-bold text-accent-green">
+                Imported {summary.created} book{summary.created === 1 ? "" : "s"}.
+              </p>
+              {summary.skipped > 0 && (
+                <p className="mt-1 text-accent-red">{summary.skipped} rows were skipped.</p>
+              )}
+              <button
+                onClick={onClose}
+                className="mt-3 rounded-[7px] bg-wood px-4 py-[11px] text-[13px] font-bold text-white hover:opacity-90"
+              >
+                Done
+              </button>
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );
