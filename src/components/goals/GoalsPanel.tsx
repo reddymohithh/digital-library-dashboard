@@ -74,10 +74,10 @@ export default function GoalsPanel({ onClose }: { onClose: () => void }) {
   return (
     <div className="fixed inset-0 z-50 flex justify-end bg-black/40" onClick={onClose}>
       <div
-        className="h-full w-1/4 min-w-[340px] max-w-[420px] overflow-y-auto bg-panel-muted shadow-2xl"
+        className="flex h-full w-1/4 min-w-[340px] max-w-[420px] flex-col overflow-hidden bg-panel-muted shadow-2xl"
         onClick={(e) => e.stopPropagation()}
       >
-        <div className="flex items-center justify-between border-b border-border bg-panel px-5 py-[14px]">
+        <div className="flex shrink-0 items-center justify-between border-b border-border bg-panel px-5 py-[14px]">
           <h2 className="font-serif-heading text-[17px] font-bold text-foreground">
             Reading Goals {year}
           </h2>
@@ -86,7 +86,7 @@ export default function GoalsPanel({ onClose }: { onClose: () => void }) {
           </button>
         </div>
 
-        <div className="space-y-4 p-5">
+        <div className="flex-1 space-y-4 overflow-y-auto p-5">
           <section className="rounded-xl border border-border bg-panel p-4">
             <div className="mb-3 flex items-center justify-between">
               <SectionLabel>Goals Set</SectionLabel>

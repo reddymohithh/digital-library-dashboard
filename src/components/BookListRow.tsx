@@ -13,7 +13,7 @@ export default function BookListRow({
   return (
     <button
       onClick={onClick}
-      className={`grid w-full ${BOOK_LIST_GRID_COLS} items-center gap-4 border-b border-border px-2 py-2.5 text-left hover:bg-panel-muted`}
+      className={`grid w-full ${BOOK_LIST_GRID_COLS} items-center gap-4 border-b border-border px-6 py-2.5 text-left hover:bg-panel-muted`}
     >
       <div className="relative h-11 w-8 shrink-0 overflow-hidden rounded-sm border border-border">
         {book.coverUrl ? (

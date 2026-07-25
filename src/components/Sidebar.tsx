@@ -47,7 +47,7 @@ export default function Sidebar({
         </button>
       </div>
 
-      <div className="flex-1 overflow-y-auto px-4 pb-3.5">
+      <div className="flex-1 overflow-y-auto px-4 pt-3 pb-3.5">
         <div className="mb-4">
           <SectionLabel>Status</SectionLabel>
           <div className="flex flex-col">

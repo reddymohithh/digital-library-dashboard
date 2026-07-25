@@ -1,9 +1,13 @@
 import { z } from "zod";
 import type { Format, Status } from "@prisma/client";
 
-/** Shared column template so the list-view header and rows always line up. */
+/** Shared column template so the list-view header and rows always line up.
+ * Genre/Status/Rating use fixed widths (not fr units) so each column hugs
+ * its own content — with flexible widths, short text (e.g. "Fiction") left
+ * a lot of empty space inside the column itself, making the gap to the next
+ * column look uneven even though the grid gap was uniform. */
 export const BOOK_LIST_GRID_COLS =
-  "grid-cols-[48px_minmax(0,3fr)_minmax(0,2fr)_minmax(0,1.4fr)_110px_100px]";
+  "grid-cols-[48px_minmax(0,3fr)_minmax(0,2fr)_120px_110px_90px]";
 
 export const STATUS_CSV_TO_ENUM: Record<string, Status> = {
   reading: "READING",

@@ -135,7 +135,7 @@ export default function Home() {
                 ))}
               </div>
             ) : (
-              <div className="px-6">
+              <div>
                 <BookListHeader />
                 {books.map((book) => (
                   <BookListRow key={book.id} book={book} onClick={() => setSelectedBook(book)} />
