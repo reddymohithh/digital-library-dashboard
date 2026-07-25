@@ -38,9 +38,17 @@ further terminal or database work is needed.
 ### 2. Generate a bootstrap admin credential
 
 `ADMIN_USERNAME` / `ADMIN_PASSWORD_HASH` are only used to create the admin
-login **the first time anyone logs in**. After that, the real credential lives
-in the database, and you change it in-app (see "Change Login" below) — so
-these env vars never need to be touched again after initial setup.
+login **the first time anyone logs in against a given database** — the login
+route checks whether an `AdminCredential` row already exists, and only reads
+these env vars to create one if it doesn't. After that, the real credential
+lives in the database, and you change it in-app (see "Change Login" below).
+
+Because of this, if you're deploying to Vercel using the **same** database
+you already used locally (the common case for a single-DB personal project),
+the bootstrap row was already created during local testing — so these two env
+vars won't actually be read again on Vercel, even though you still set them
+there. Nothing to worry about; it just means your real login is whatever you
+last set via "Change Login," not necessarily what's in these env vars.
 
 Pick a starting username and password, then hash the password locally (never
 commit the plain password anywhere):
