@@ -14,19 +14,21 @@ export default function Pagination({
   const totalPages = Math.max(1, Math.ceil(total / pageSize));
   if (totalPages <= 1) return null;
 
-  const pages = Array.from({ length: totalPages }, (_, i) => i + 1).filter(
-    (p) => p === 1 || p === totalPages || Math.abs(p - page) <= 2,
-  );
+  // Always show exactly 3 consecutive page numbers, centered on the current
+  // page and clamped to the valid range (e.g. page 1 -> [1,2,3], last page
+  // -> [last-2,last-1,last]).
+  let windowStart = page - 1;
+  if (windowStart < 1) windowStart = 1;
+  if (windowStart > totalPages - 2) windowStart = Math.max(1, totalPages - 2);
+  const windowSize = Math.min(3, totalPages);
+  const pages = Array.from({ length: windowSize }, (_, i) => windowStart + i);
 
   return (
-    <div className="flex items-center justify-center gap-1 border-t border-border px-6 py-3 text-sm">
+    <div className="flex shrink-0 items-center justify-center gap-1 border-t border-border bg-panel px-6 py-3 text-sm">
       <PageButton disabled={page === 1} onClick={() => onPageChange(1)} label="«" />
       <PageButton disabled={page === 1} onClick={() => onPageChange(page - 1)} label="‹" />
-      {pages.map((p, i) => (
-        <span key={p} className="flex items-center">
-          {i > 0 && pages[i - 1] !== p - 1 && <span className="px-1 text-muted">…</span>}
-          <PageButton active={p === page} onClick={() => onPageChange(p)} label={String(p)} />
-        </span>
+      {pages.map((p) => (
+        <PageButton key={p} active={p === page} onClick={() => onPageChange(p)} label={String(p)} />
       ))}
       <PageButton
         disabled={page === totalPages}

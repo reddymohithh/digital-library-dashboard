@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useAdmin } from "@/lib/AdminContext";
 import type { BookDTO, BooksResponse, Facets } from "@/lib/types";
 import Sidebar from "@/components/Sidebar";
@@ -18,6 +18,7 @@ import ChangeCredentialsModal from "@/components/ChangeCredentialsModal";
 import GoalsPanel from "@/components/goals/GoalsPanel";
 
 const EMPTY_FACETS: Facets = { status: [], genre: [], rating: [] };
+const LIST_PAGE_SIZE = 27;
 
 export default function Home() {
   const { isAdmin } = useAdmin();
@@ -41,6 +42,45 @@ export default function Home() {
   const [showAccount, setShowAccount] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
+  // Grid page size is derived from however many columns the CSS grid
+  // actually renders at the current viewport width/zoom: 4 full rows, with
+  // the 4th row intentionally one short (an empty trailing cell) rather than
+  // a hard-coded book count.
+  const gridRef = useRef<HTMLDivElement>(null);
+  const [gridColumns, setGridColumns] = useState(7);
+
+  useEffect(() => {
+    if (view !== "grid") return;
+    const el = gridRef.current;
+    if (!el) return;
+
+    let debounceTimer: ReturnType<typeof setTimeout>;
+
+    function measure() {
+      if (!el) return;
+      const cols = getComputedStyle(el)
+        .gridTemplateColumns.trim()
+        .split(" ")
+        .filter(Boolean).length;
+      if (cols > 0) setGridColumns((prev) => (prev === cols ? prev : cols));
+    }
+
+    function scheduleMeasure() {
+      clearTimeout(debounceTimer);
+      debounceTimer = setTimeout(measure, 120);
+    }
+
+    measure();
+    const ro = new ResizeObserver(scheduleMeasure);
+    ro.observe(el);
+    return () => {
+      clearTimeout(debounceTimer);
+      ro.disconnect();
+    };
+  }, [view]);
+
+  const pageSize = view === "grid" ? Math.max(gridColumns * 4 - 1, gridColumns) : LIST_PAGE_SIZE;
+
   useEffect(() => {
     const t = setTimeout(() => setDebouncedSearch(search), 300);
     return () => clearTimeout(t);
@@ -48,25 +88,35 @@ export default function Home() {
 
   useEffect(() => {
     setPage(1);
-  }, [filters, debouncedSearch, sort]);
+  }, [filters, debouncedSearch, sort, pageSize]);
+
+  // Guards against out-of-order responses: pageSize can change rapidly while
+  // the grid column measurement settles (e.g. during a resize), firing
+  // several overlapping requests. Without this, an older, slower response
+  // could resolve after a newer one and overwrite it with stale data.
+  const fetchIdRef = useRef(0);
 
   const fetchBooks = useCallback(async () => {
+    const requestId = ++fetchIdRef.current;
     setLoading(true);
     const params = new URLSearchParams({
       status: filters.status,
       genre: filters.genre,
       sort,
       page: String(page),
+      pageSize: String(pageSize),
     });
     if (filters.rating !== "ALL") params.set("rating", filters.rating);
     if (debouncedSearch) params.set("search", debouncedSearch);
 
     const res = await fetch(`/api/books?${params.toString()}`);
+    if (requestId !== fetchIdRef.current) return; // superseded by a newer request
+
     if (res.ok) {
       setData(await res.json());
     }
     setLoading(false);
-  }, [filters, sort, page, debouncedSearch]);
+  }, [filters, sort, page, debouncedSearch, pageSize]);
 
   useEffect(() => {
     fetchBooks();
@@ -82,6 +132,7 @@ export default function Home() {
   const books = data?.books ?? [];
   const facets = data?.facets ?? EMPTY_FACETS;
   const genreOptions = facets.genre.map((g) => g.value);
+  const isEmpty = !loading && books.length === 0;
 
   return (
     <div className="flex h-screen flex-col overflow-hidden">
@@ -118,26 +169,36 @@ export default function Home() {
             total={data?.total ?? 0}
           />
 
-          <div className="flex-1 overflow-y-auto">
-            {loading && books.length === 0 ? (
-              <p className="p-6 text-sm text-muted">Loading…</p>
-            ) : books.length === 0 ? (
-              <p className="p-6 text-sm text-muted">
-                No books match these filters yet.
-                {isAdmin && " Add one, or import a CSV, using the buttons above."}
-              </p>
-            ) : view === "grid" ? (
+          <div className="flex-1 overflow-y-auto" style={{ scrollbarGutter: "stable" }}>
+            {view === "grid" ? (
               <div
+                ref={gridRef}
                 className="grid p-3 sm:p-6"
                 style={{
                   gridTemplateColumns: "repeat(auto-fill, minmax(130px, 1fr))",
                   gap: "16px",
                 }}
               >
-                {books.map((book) => (
-                  <BookCard key={book.id} book={book} onClick={() => setSelectedBook(book)} />
-                ))}
+                {loading && books.length === 0 ? (
+                  <p className="col-span-full text-sm text-muted">Loading…</p>
+                ) : isEmpty ? (
+                  <p className="col-span-full text-sm text-muted">
+                    No books match these filters yet.
+                    {isAdmin && " Add one, or import a CSV, using the buttons above."}
+                  </p>
+                ) : (
+                  books.map((book) => (
+                    <BookCard key={book.id} book={book} onClick={() => setSelectedBook(book)} />
+                  ))
+                )}
               </div>
+            ) : loading && books.length === 0 ? (
+              <p className="p-6 text-sm text-muted">Loading…</p>
+            ) : isEmpty ? (
+              <p className="p-6 text-sm text-muted">
+                No books match these filters yet.
+                {isAdmin && " Add one, or import a CSV, using the buttons above."}
+              </p>
             ) : (
               <div>
                 <BookListHeader />
@@ -146,14 +207,14 @@ export default function Home() {
                 ))}
               </div>
             )}
-
-            <Pagination
-              page={data?.page ?? 1}
-              pageSize={data?.pageSize ?? 27}
-              total={data?.total ?? 0}
-              onPageChange={setPage}
-            />
           </div>
+
+          <Pagination
+            page={data?.page ?? 1}
+            pageSize={data?.pageSize ?? pageSize}
+            total={data?.total ?? 0}
+            onPageChange={setPage}
+          />
         </main>
       </div>
 
