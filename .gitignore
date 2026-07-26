@@ -50,6 +50,7 @@ next-env.d.ts
 AGENTS.md
 CLAUDE.md
 CONTRIBUTING.md
+SESSION_TRANSCRIPT.md
 design-reference/
 public/file.svg
 public/globe.svg
