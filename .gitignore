@@ -40,3 +40,19 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# Kept locally for continuity/dev tooling, deliberately not published to the
+# public repo: internal AI-session context/workflow notes, Claude Code's
+# local dev-server config, unused scaffold boilerplate, and the pre-rebuild
+# design source material (which included a literal AI design-session log).
+# These files still exist on disk — only untracked from git.
+.claude/
+AGENTS.md
+CLAUDE.md
+CONTRIBUTING.md
+design-reference/
+public/file.svg
+public/globe.svg
+public/next.svg
+public/vercel.svg
+public/window.svg
