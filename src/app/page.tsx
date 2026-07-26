@@ -67,7 +67,7 @@ export default function Home() {
 
     function scheduleMeasure() {
       clearTimeout(debounceTimer);
-      debounceTimer = setTimeout(measure, 120);
+      debounceTimer = setTimeout(measure, 200);
     }
 
     measure();
@@ -79,7 +79,16 @@ export default function Home() {
     };
   }, [view]);
 
-  const pageSize = view === "grid" ? Math.max(gridColumns * 4 - 1, gridColumns) : LIST_PAGE_SIZE;
+  // Below ~4 columns the grid is a narrow/mobile layout that always scrolls
+  // anyway, so "4 rows fit on screen" isn't a meaningful constraint there —
+  // use a generous fixed page size instead of a tiny column-derived one.
+  const isNarrowGrid = gridColumns <= 3;
+  const pageSize =
+    view === "grid"
+      ? isNarrowGrid
+        ? LIST_PAGE_SIZE
+        : Math.max(gridColumns * 4 - 1, gridColumns)
+      : LIST_PAGE_SIZE;
 
   useEffect(() => {
     const t = setTimeout(() => setDebouncedSearch(search), 300);

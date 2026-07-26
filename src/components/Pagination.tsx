@@ -24,7 +24,7 @@ export default function Pagination({
   const pages = Array.from({ length: windowSize }, (_, i) => windowStart + i);
 
   return (
-    <div className="flex shrink-0 items-center justify-center gap-1 border-t border-border bg-panel px-6 py-3 text-sm">
+    <div className="flex shrink-0 items-center justify-center gap-1 border-t border-border px-6 py-3 text-sm">
       <PageButton disabled={page === 1} onClick={() => onPageChange(1)} label="«" />
       <PageButton disabled={page === 1} onClick={() => onPageChange(page - 1)} label="‹" />
       {pages.map((p) => (
