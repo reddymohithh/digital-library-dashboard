@@ -113,7 +113,7 @@ export default function BookFormModal({
         className="max-h-[88vh] w-full max-w-xl overflow-y-auto rounded-[14px] bg-panel-soft shadow-2xl"
         onClick={(e) => e.stopPropagation()}
       >
-        <div className="flex items-center justify-between rounded-t-[14px] border-b border-border bg-panel px-6 py-[18px]">
+        <div className="flex items-center justify-between rounded-t-[14px] border-b border-border bg-panel px-4 py-[18px] sm:px-6">
           <h2 className="font-serif-heading text-[17px] font-bold text-foreground">
             {isEdit ? "Edit Book" : "Add Book"}
           </h2>
@@ -126,7 +126,7 @@ export default function BookFormModal({
           </button>
         </div>
 
-        <form onSubmit={handleSubmit} className="grid grid-cols-2 gap-3.5 p-6">
+        <form onSubmit={handleSubmit} className="grid grid-cols-1 gap-3.5 p-4 sm:grid-cols-2 sm:p-6">
           <TextField label="Title *" placeholder="e.g. Sapiens" value={form.title} onChange={(v) => set("title", v)} required className="col-span-2" />
           <TextField label="Author" placeholder="e.g. Yuval Noah Harari" value={form.author} onChange={(v) => set("author", v)} />
           <div>

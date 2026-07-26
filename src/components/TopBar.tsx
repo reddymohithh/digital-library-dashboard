@@ -20,6 +20,7 @@ export default function TopBar({
   onOpenAdd,
   onOpenImport,
   onOpenAccount,
+  onOpenSidebar,
 }: {
   view: "grid" | "list";
   onViewChange: (v: "grid" | "list") => void;
@@ -27,6 +28,7 @@ export default function TopBar({
   onOpenAdd: () => void;
   onOpenImport: () => void;
   onOpenAccount: () => void;
+  onOpenSidebar: () => void;
 }) {
   const { isAdmin, logout } = useAdmin();
   const [menuOpen, setMenuOpen] = useState(false);
@@ -44,19 +46,27 @@ export default function TopBar({
   }, [menuOpen]);
 
   return (
-    <div className="flex h-14 shrink-0 items-center gap-3 border-b border-border bg-panel px-6">
+    <div className="flex h-14 shrink-0 items-center gap-2 border-b border-border bg-panel px-3 sm:gap-3 sm:px-6">
+      <button
+        onClick={onOpenSidebar}
+        aria-label="Open filters"
+        className="flex h-8 w-8 shrink-0 items-center justify-center rounded-md border border-border-soft bg-panel-soft text-wood md:hidden"
+      >
+        ☰
+      </button>
+
       <span
-        className="font-serif-heading whitespace-nowrap text-[21px] font-bold text-foreground"
+        className="font-serif-heading whitespace-nowrap text-[16px] font-bold text-foreground sm:text-[21px]"
         style={{ letterSpacing: "-0.02em" }}
       >
         📚 My Library
       </span>
 
-      <div className="ml-auto flex items-center gap-2">
+      <div className="ml-auto flex items-center gap-1.5 sm:gap-2">
         <button
           onClick={() => onViewChange("grid")}
           aria-label="Grid view"
-          className={`flex h-8 w-8 items-center justify-center rounded-md border text-[15px] ${
+          className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-md border text-[15px] ${
             view === "grid"
               ? "border-border-soft bg-wood text-white"
               : "border-border-soft bg-panel-muted text-wood"
@@ -67,39 +77,42 @@ export default function TopBar({
         <button
           onClick={() => onViewChange("list")}
           aria-label="List view"
-          className={`flex h-8 w-8 items-center justify-center rounded-md border text-[15px] ${
+          className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-md border text-[15px] ${
             view === "list"
               ? "border-border-soft bg-wood text-white"
               : "border-border-soft bg-panel-muted text-wood"
           }`}
         >
-          ☰
+          📋
         </button>
 
         {isAdmin && (
           <>
             <button
               onClick={onOpenImport}
-              className="rounded-md border border-border-soft bg-panel-soft px-3.5 py-[7px] text-[13px] text-muted-dark hover:bg-panel-muted"
+              aria-label="Import CSV"
+              className="shrink-0 rounded-md border border-border-soft bg-panel-soft px-2 py-[7px] text-[13px] text-muted-dark hover:bg-panel-muted sm:px-3.5"
             >
-              ↑ Import CSV
+              ↑<span className="hidden sm:inline"> Import CSV</span>
             </button>
             <button
               onClick={onOpenAdd}
-              className="rounded-md bg-wood px-3.5 py-[7px] text-[13px] font-bold text-white hover:opacity-90"
+              aria-label="Add book"
+              className="shrink-0 rounded-md bg-wood px-2 py-[7px] text-[13px] font-bold text-white hover:opacity-90 sm:px-3.5"
             >
-              + Add Book
+              +<span className="hidden sm:inline"> Add Book</span>
             </button>
           </>
         )}
 
         {isAdmin ? (
-          <div className="relative pl-2" ref={menuRef}>
+          <div className="relative pl-1 sm:pl-2" ref={menuRef}>
             <button
               onClick={() => setMenuOpen((v) => !v)}
-              className="flex items-center gap-1.5 rounded-md border border-border-soft bg-panel-soft px-3 py-1.5 text-[12px] font-bold text-wood hover:bg-panel-muted"
+              className="flex items-center gap-1.5 rounded-md border border-border-soft bg-panel-soft px-2.5 py-1.5 text-[12px] font-bold text-wood hover:bg-panel-muted sm:px-3"
             >
-              ● Admin <span className="text-xs text-muted">▾</span>
+              ● <span className="hidden sm:inline">Admin</span>{" "}
+              <span className="text-xs text-muted">▾</span>
             </button>
             {menuOpen && (
               <div className="absolute right-0 top-full z-20 mt-1 w-40 overflow-hidden rounded-md border border-border bg-panel shadow-lg">
@@ -128,7 +141,7 @@ export default function TopBar({
           <button
             onClick={onOpenLogin}
             aria-label="Admin login"
-            className="flex h-[30px] w-[30px] items-center justify-center rounded-md border border-border bg-panel-soft text-sm text-muted-light"
+            className="flex h-[30px] w-[30px] shrink-0 items-center justify-center rounded-md border border-border bg-panel-soft text-sm text-muted-light"
           >
             🔐
           </button>

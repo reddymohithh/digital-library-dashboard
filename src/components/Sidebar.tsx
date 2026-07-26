@@ -24,11 +24,15 @@ export default function Sidebar({
   filters,
   onChange,
   onOpenGoals,
+  open,
+  onClose,
 }: {
   facets: Facets;
   filters: Filters;
   onChange: (next: Partial<Filters>) => void;
   onOpenGoals: () => void;
+  open: boolean;
+  onClose: () => void;
 }) {
   const totalBooks = facets.status.reduce((sum, s) => sum + s.count, 0);
   const statusCounts = new Map(facets.status.map((s) => [s.value, s.count]));
@@ -36,82 +40,110 @@ export default function Sidebar({
   const ratings = [5, 4, 3, 2, 1, 0];
   const ratingCounts = new Map(facets.rating.map((r) => [r.value, r.count]));
 
+  function handleChange(next: Partial<Filters>) {
+    onChange(next);
+    onClose(); // no-op visually on desktop (sidebar isn't an overlay there)
+  }
+
   return (
-    <aside className="flex w-[224px] shrink-0 flex-col bg-panel-muted border-r border-border">
-      <div className="shrink-0 border-b border-border px-4 py-2.5">
-        <button
-          onClick={onOpenGoals}
-          className="flex h-9 w-full items-center justify-center gap-1 rounded-md border border-border-soft bg-panel-soft text-[12px] font-bold uppercase tracking-wide text-wood shadow-sm hover:bg-panel"
-        >
-          🎯 Reading Goals
-        </button>
-      </div>
-
-      <div className="flex-1 overflow-y-auto px-4 pt-3 pb-3.5">
-        <div className="mb-4">
-          <SectionLabel>Status</SectionLabel>
-          <div className="flex flex-col">
-            <FilterRow
-              label="All Books"
-              count={totalBooks}
-              active={filters.status === "ALL"}
-              onClick={() => onChange({ status: "ALL" })}
-            />
-            {STATUS_ORDER.map((status) => (
-              <FilterRow
-                key={status}
-                label={STATUS_LABELS[status]}
-                count={statusCounts.get(status) ?? 0}
-                active={filters.status === status}
-                onClick={() => onChange({ status })}
-              />
-            ))}
-          </div>
+    <>
+      {open && (
+        <div
+          className="fixed inset-0 z-30 bg-black/40 md:hidden"
+          onClick={onClose}
+          aria-hidden="true"
+        />
+      )}
+      <aside
+        className={`fixed inset-y-0 left-0 z-40 flex w-[260px] shrink-0 flex-col border-r border-border bg-panel-muted transition-transform duration-200 md:static md:z-auto md:w-[224px] md:translate-x-0 ${
+          open ? "translate-x-0" : "-translate-x-full"
+        }`}
+      >
+        <div className="flex shrink-0 items-center gap-2 border-b border-border px-4 py-2.5">
+          <button
+            onClick={() => {
+              onOpenGoals();
+              onClose();
+            }}
+            className="flex h-9 flex-1 items-center justify-center gap-1 rounded-md border border-border-soft bg-panel-soft text-[12px] font-bold uppercase tracking-wide text-wood shadow-sm hover:bg-panel"
+          >
+            🎯 Reading Goals
+          </button>
+          <button
+            onClick={onClose}
+            aria-label="Close filters"
+            className="flex h-9 w-9 shrink-0 items-center justify-center rounded-md border border-border-soft bg-panel-soft text-muted-dark md:hidden"
+          >
+            ✕
+          </button>
         </div>
 
-        <div className="mb-4">
-          <SectionLabel>Genre</SectionLabel>
-          <div className="flex flex-col">
-            <FilterRow
-              label="All Genres"
-              count={totalBooks}
-              active={filters.genre === "ALL"}
-              onClick={() => onChange({ genre: "ALL" })}
-            />
-            {genres.map((g) => (
+        <div className="flex-1 overflow-y-auto px-4 pt-3 pb-3.5">
+          <div className="mb-4">
+            <SectionLabel>Status</SectionLabel>
+            <div className="flex flex-col">
               <FilterRow
-                key={g.value}
-                label={g.value}
-                count={g.count}
-                active={filters.genre === g.value}
-                onClick={() => onChange({ genre: g.value })}
+                label="All Books"
+                count={totalBooks}
+                active={filters.status === "ALL"}
+                onClick={() => handleChange({ status: "ALL" })}
               />
-            ))}
+              {STATUS_ORDER.map((status) => (
+                <FilterRow
+                  key={status}
+                  label={STATUS_LABELS[status]}
+                  count={statusCounts.get(status) ?? 0}
+                  active={filters.status === status}
+                  onClick={() => handleChange({ status })}
+                />
+              ))}
+            </div>
           </div>
-        </div>
 
-        <div>
-          <SectionLabel>Rating</SectionLabel>
-          <div className="flex flex-col">
-            <FilterRow
-              label="All Ratings"
-              count={totalBooks}
-              active={filters.rating === "ALL"}
-              onClick={() => onChange({ rating: "ALL" })}
-            />
-            {ratings.map((r) => (
+          <div className="mb-4">
+            <SectionLabel>Genre</SectionLabel>
+            <div className="flex flex-col">
               <FilterRow
-                key={r}
-                label={r === 0 ? "☆☆☆☆☆" : "★".repeat(r) + "☆".repeat(5 - r)}
-                count={ratingCounts.get(r) ?? 0}
-                active={filters.rating === String(r)}
-                onClick={() => onChange({ rating: String(r) })}
+                label="All Genres"
+                count={totalBooks}
+                active={filters.genre === "ALL"}
+                onClick={() => handleChange({ genre: "ALL" })}
               />
-            ))}
+              {genres.map((g) => (
+                <FilterRow
+                  key={g.value}
+                  label={g.value}
+                  count={g.count}
+                  active={filters.genre === g.value}
+                  onClick={() => handleChange({ genre: g.value })}
+                />
+              ))}
+            </div>
+          </div>
+
+          <div>
+            <SectionLabel>Rating</SectionLabel>
+            <div className="flex flex-col">
+              <FilterRow
+                label="All Ratings"
+                count={totalBooks}
+                active={filters.rating === "ALL"}
+                onClick={() => handleChange({ rating: "ALL" })}
+              />
+              {ratings.map((r) => (
+                <FilterRow
+                  key={r}
+                  label={r === 0 ? "☆☆☆☆☆" : "★".repeat(r) + "☆".repeat(5 - r)}
+                  count={ratingCounts.get(r) ?? 0}
+                  active={filters.rating === String(r)}
+                  onClick={() => handleChange({ rating: String(r) })}
+                />
+              ))}
+            </div>
           </div>
         </div>
-      </div>
-    </aside>
+      </aside>
+    </>
   );
 }
 

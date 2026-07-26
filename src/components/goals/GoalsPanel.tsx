@@ -74,7 +74,7 @@ export default function GoalsPanel({ onClose }: { onClose: () => void }) {
   return (
     <div className="fixed inset-0 z-50 flex justify-end bg-black/40" onClick={onClose}>
       <div
-        className="flex h-full w-1/4 min-w-[340px] max-w-[420px] flex-col overflow-hidden bg-panel-muted shadow-2xl"
+        className="flex h-full w-full flex-col overflow-hidden bg-panel-muted shadow-2xl sm:w-1/4 sm:min-w-[340px] sm:max-w-[420px]"
         onClick={(e) => e.stopPropagation()}
       >
         <div className="flex shrink-0 items-center justify-between border-b border-border bg-panel px-5 py-[14px]">

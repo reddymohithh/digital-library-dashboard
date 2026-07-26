@@ -39,6 +39,7 @@ export default function Home() {
   const [showGoals, setShowGoals] = useState(false);
   const [showLogin, setShowLogin] = useState(false);
   const [showAccount, setShowAccount] = useState(false);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
 
   useEffect(() => {
     const t = setTimeout(() => setDebouncedSearch(search), 300);
@@ -94,6 +95,7 @@ export default function Home() {
         }}
         onOpenImport={() => setShowImport(true)}
         onOpenAccount={() => setShowAccount(true)}
+        onOpenSidebar={() => setSidebarOpen(true)}
       />
 
       <div className="flex flex-1 overflow-hidden">
@@ -102,6 +104,8 @@ export default function Home() {
           filters={filters}
           onChange={(next) => setFilters((f) => ({ ...f, ...next }))}
           onOpenGoals={() => setShowGoals(true)}
+          open={sidebarOpen}
+          onClose={() => setSidebarOpen(false)}
         />
 
         <main className="flex flex-1 flex-col overflow-hidden">
@@ -124,10 +128,10 @@ export default function Home() {
               </p>
             ) : view === "grid" ? (
               <div
-                className="grid p-6"
+                className="grid p-3 sm:p-6"
                 style={{
-                  gridTemplateColumns: "repeat(auto-fill, minmax(142px, 1fr))",
-                  gap: "22px",
+                  gridTemplateColumns: "repeat(auto-fill, minmax(130px, 1fr))",
+                  gap: "16px",
                 }}
               >
                 {books.map((book) => (
