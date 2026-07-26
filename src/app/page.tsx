@@ -143,6 +143,15 @@ export default function Home() {
   const genreOptions = facets.genre.map((g) => g.value);
   const isEmpty = !loading && books.length === 0;
 
+  // Cumulative count shown so far (all full pages before this one, at the
+  // pageSize actually used for this response, plus however many landed on
+  // the current page) rather than just this page's count — accurate even
+  // though pageSize varies with viewport/zoom, since changing pageSize
+  // always resets to page 1 first (see the effect above).
+  const shownCount = data
+    ? Math.min((data.page - 1) * data.pageSize + books.length, data.total)
+    : 0;
+
   return (
     <div className="flex h-screen flex-col overflow-hidden">
       <TopBar
@@ -174,56 +183,59 @@ export default function Home() {
             onSearchChange={setSearch}
             sort={sort}
             onSortChange={setSort}
-            shown={books.length}
+            shown={shownCount}
             total={data?.total ?? 0}
           />
 
           <div className="flex-1 overflow-y-auto" style={{ scrollbarGutter: "stable" }}>
-            {view === "grid" ? (
-              <div
-                ref={gridRef}
-                className="grid p-3 sm:p-6"
-                style={{
-                  gridTemplateColumns: "repeat(auto-fill, minmax(130px, 1fr))",
-                  gap: "16px",
-                }}
-              >
-                {loading && books.length === 0 ? (
-                  <p className="col-span-full text-sm text-muted">Loading…</p>
-                ) : isEmpty ? (
-                  <p className="col-span-full text-sm text-muted">
-                    No books match these filters yet.
-                    {isAdmin && " Add one, or import a CSV, using the buttons above."}
-                  </p>
-                ) : (
-                  books.map((book) => (
-                    <BookCard key={book.id} book={book} onClick={() => setSelectedBook(book)} />
-                  ))
-                )}
-              </div>
-            ) : loading && books.length === 0 ? (
-              <p className="p-6 text-sm text-muted">Loading…</p>
-            ) : isEmpty ? (
-              <p className="p-6 text-sm text-muted">
-                No books match these filters yet.
-                {isAdmin && " Add one, or import a CSV, using the buttons above."}
-              </p>
-            ) : (
-              <div>
-                <BookListHeader />
-                {books.map((book) => (
-                  <BookListRow key={book.id} book={book} onClick={() => setSelectedBook(book)} />
-                ))}
-              </div>
-            )}
-          </div>
+            <div className="flex min-h-full flex-col">
+              {view === "grid" ? (
+                <div
+                  ref={gridRef}
+                  className="grid flex-1 p-3 sm:p-6"
+                  style={{
+                    gridTemplateColumns: "repeat(auto-fill, minmax(130px, 1fr))",
+                    gap: "16px",
+                    alignContent: "start",
+                  }}
+                >
+                  {loading && books.length === 0 ? (
+                    <p className="col-span-full text-sm text-muted">Loading…</p>
+                  ) : isEmpty ? (
+                    <p className="col-span-full text-sm text-muted">
+                      No books match these filters yet.
+                      {isAdmin && " Add one, or import a CSV, using the buttons above."}
+                    </p>
+                  ) : (
+                    books.map((book) => (
+                      <BookCard key={book.id} book={book} onClick={() => setSelectedBook(book)} />
+                    ))
+                  )}
+                </div>
+              ) : loading && books.length === 0 ? (
+                <p className="flex-1 p-6 text-sm text-muted">Loading…</p>
+              ) : isEmpty ? (
+                <p className="flex-1 p-6 text-sm text-muted">
+                  No books match these filters yet.
+                  {isAdmin && " Add one, or import a CSV, using the buttons above."}
+                </p>
+              ) : (
+                <div className="flex-1">
+                  <BookListHeader />
+                  {books.map((book) => (
+                    <BookListRow key={book.id} book={book} onClick={() => setSelectedBook(book)} />
+                  ))}
+                </div>
+              )}
 
-          <Pagination
-            page={data?.page ?? 1}
-            pageSize={data?.pageSize ?? pageSize}
-            total={data?.total ?? 0}
-            onPageChange={setPage}
-          />
+              <Pagination
+                page={data?.page ?? 1}
+                pageSize={data?.pageSize ?? pageSize}
+                total={data?.total ?? 0}
+                onPageChange={setPage}
+              />
+            </div>
+          </div>
         </main>
       </div>
 
